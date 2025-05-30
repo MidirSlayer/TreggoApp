@@ -1,6 +1,6 @@
 // src/screens/HomeScreen.js
 import React, { useEffect, useState} from 'react';
-import { View, Text, Button, StyleSheet, FlatList, TouchableOpacity} from 'react-native';
+import { View, Text, Button, StyleSheet, FlatList, TouchableOpacity, SafeAreaView} from 'react-native';
 import { clearSession } from '../services/session';
 import * as Location from 'expo-location'
 
@@ -24,6 +24,8 @@ export default function HomeScreen() {
 
             const loc = await Location.getCurrentPositionAsync({});
             setLocation(loc.coords);
+
+            console.log('Ubicacion actual', location)
         })();
     },[]);
 
@@ -42,13 +44,17 @@ export default function HomeScreen() {
         .sort((a,b) => a.distancia - b.distancia);
 
         setFilteredJobs(jobs);
+
+        console.log('Trabajos filtrados', filteredJobs)
     },[selectedType, location])
 
     const renderJob = ({item}) => {
-        <View style={styles.card}>
+        return (
+            <View style={styles.card}>
             <Text style={styles.titulo}>{item.titulo}</Text>
             <Text>{item.tipo} - Distancia aprox: {item.distancia.toFixed(2)}</Text>
         </View>
+        )
     }
 
     return(
@@ -65,13 +71,17 @@ export default function HomeScreen() {
                 ))}
             </View>
 
-            <FlatList
-                data={filteredJobs}
-                keyExtractor={(item) => item.id}
-                renderItem={renderJob}
-                contentContainerStyle={{paddingBottom: 100}}
+           <SafeAreaView>
+             <FlatList
+            data={filteredJobs}
+            keyExtractor={(item) => item.id}
+            renderItem={renderJob}
+            contentContainerStyle={styles.lista}
+            ListEmptyComponent={<Text style={styles.empty}>No hay trabajos disponibles</Text>}
             />
-        </View>
+           </SafeAreaView>
+
+            </View>
     );
 }
 
@@ -88,4 +98,15 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   titulo: { fontSize: 18, fontWeight: 'bold' },
+  lista: {
+  paddingBottom: 100,
+},
+
+empty: {
+  textAlign: 'center',
+  marginTop: 50,
+  fontSize: 16,
+  color: '#888',
+},
+
 });
