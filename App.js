@@ -1,20 +1,25 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState, useEffect } from "react"
+import { NavigationContainer } from "@react-navigation/native"
+import AuthStack from "./src/navigation/AuthStack"
+import AppStack from "./src/navigation/Appstack";
+import { getSession } from "./src/services/session";
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+  const [loading, setLoading] = useState(true);
+  const [session, setSession] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      const savedSession = await getSession();
+      setSession(savedSession);
+      setLoading(false)
+    })();
+  },[]);
+
+    if (loading) return null
+  return (
+    <NavigationContainer>
+      {session ? <AppStack/> : <AuthStack/>}
+    </NavigationContainer>
+)};
