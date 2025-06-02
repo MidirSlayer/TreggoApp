@@ -8,7 +8,7 @@ import { getSession, } from "../services/session";
 
 
 export default function PostJobScreen () {
-    const [tipos, setTipos] = useState([]);
+    const [tipo, setTipos] = useState([]);
     const [titulo, setTitulo] = useState('');
     const [descripcion, setDescripcion] = useState('')
     const [jobTypes, setJobTypes] = useState([])
@@ -50,7 +50,7 @@ export default function PostJobScreen () {
             const loc = await Location.getCurrentPositionAsync({})
 
             const job = {
-            tipos,
+            tipo,
             titulo,
             descripcion,
             lat: loc.coords.latitude,
@@ -66,7 +66,7 @@ export default function PostJobScreen () {
 
             setTitulo('')
             setDescripcion('')
-            setTipos(tipos[0])
+            setTipos(tipo[0])
         } catch (error) {
             console.log('Error al publicar', error.message);
             Alert.alert('Error', error.message);

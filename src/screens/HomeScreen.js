@@ -1,5 +1,5 @@
 // src/screens/HomeScreen.js
-import React, { useEffect, useState} from 'react';
+import React, { useEffect, useState, useLayoutEffect} from 'react';
 import { View, Text, Button, StyleSheet, FlatList, TouchableOpacity, SafeAreaView, ActivityIndicator} from 'react-native';
 import { clearSession, getSession } from '../services/session';
 import * as Location from 'expo-location'
@@ -7,7 +7,7 @@ import { obtenerTrabajos, obtenerTiposTrabajo} from '../services/supabase';
 
 
 
-export default function HomeScreen() {
+export default function HomeScreen({navigation}) {
     const [trabajos, setTrabajos] = useState([]);
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(null);
@@ -27,6 +27,24 @@ export default function HomeScreen() {
 
         cargarTipos();
     }, []);
+
+    async function cerrarSesion() {
+        await clearSession();
+        navigation.reset({
+            index: 0,
+            routes: [{name: 'Login'}]
+        });
+    }
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerRight: () => (
+                <TouchableOpacity onPress={cerrarSesion} style={{marginRight: 16}}>
+                    <Text style={{color: '#007aff'}}>Cerrar Session</Text>
+                </TouchableOpacity>
+            )
+        });
+    }, [navigation])
 
     useEffect(() => {
         async function cargarTrabajos() {
@@ -116,6 +134,7 @@ export default function HomeScreen() {
  function toRad(grados) {
     return (grados * Math.PI) / 180;
  }
+
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16 },
