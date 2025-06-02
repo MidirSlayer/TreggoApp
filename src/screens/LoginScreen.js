@@ -10,13 +10,12 @@ export default function LoginScreen({ navigation }) {
     
     const handleLogin = async () => {
       try {     
-        const user = await signIn(email, password);
-        await saveSession({
-            access_token: user.access_token,
-            user: user.user
-        })
+        const { access_token, refresh_token, user } = await signIn(email, password);
+        console.log('REFRESHTOKEN:', refresh_token); // 👈 Para confirmar
+        await saveSession({ access_token, refresh_token, user });
+
         Alert.alert('Éxito', 'Sesión iniciada');
-        navigation.replace('Home')
+        navigation.replace('Main')
       } catch (error) {
         console.log('ERROR al iniciar sesion', error.message);
         Alert.alert('Error', error.message);

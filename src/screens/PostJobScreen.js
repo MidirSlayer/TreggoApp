@@ -1,44 +1,87 @@
-import React, { useState} from "react";
+import React, { useState, useEffect} from "react";
 import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
 import { Picker } from '@react-native-picker/picker';
+import * as Location from 'expo-location';
+import { publicarTrabajos, obtenerTiposTrabajo} from "../services/supabase";
+import { getSession, } from "../services/session";
 
-const JOB_TYPES = ['Construcción', 'Carpintería', 'Soldadura', 'Salud'];
+
 
 export default function PostJobScreen () {
-    const [tipo, setTipo] = useState(JOB_TYPES[0]);
+    const [tipos, setTipos] = useState([]);
     const [titulo, setTitulo] = useState('');
     const [descripcion, setDescripcion] = useState('')
+    const [jobTypes, setJobTypes] = useState([])
 
-    const handleSubmit = () => {
+    useEffect(() => {
+  async function cargarTipos() {
+    try {
+      const data = await obtenerTiposTrabajo();
+      setJobTypes(data.map((t) => t.nombre));
+    } catch (e) {
+      console.error('Error al obtener tipos', e);
+    }
+  }
+
+  cargarTipos();
+}, []);
+
+    const handleSubmit = async() => {
         if (!titulo || !descripcion) {
             Alert.alert('Campos requeridos', 'Completa los campos');
             return;
         }
 
-        const job = {
-            tipo,
+        try {
+            const { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted' ) {
+                throw new Error('Permiso de ubicacion denegado')
+            }
+
+            const session = await getSession();
+
+            if (!session || !session.user?.id) {
+                Alert.alert('Error',  'Usuarios no autenticado');
+                return;
+            }
+
+            const user_id = session.user.id;
+
+            const loc = await Location.getCurrentPositionAsync({})
+
+            const job = {
+            tipos,
             titulo,
             descripcion,
-            fecha: new Date().toISOString()
-        };
+            lat: loc.coords.latitude,
+            lon: loc.coords.longitude,
+            fecha: new Date().toISOString(),
+            user_id
+            };
 
-        console.log('Servicio publicado', job);
-        Alert.alert('Exito', 'Tu servicio ha sido publicado')
+            
+            const creado = await publicarTrabajos(job);
+            console.log('Servicio publicado', job);
+            Alert.alert('Exito', 'Tu servicio ha sido publicado')
 
-        setTitulo('')
-        setDescripcion('')
-        setTipo(JOB_TYPES[0])
+            setTitulo('')
+            setDescripcion('')
+            setTipos(tipos[0])
+        } catch (error) {
+            console.log('Error al publicar', error.message);
+            Alert.alert('Error', error.message);
+        }
     };
 
     return (
         <View style={styles.container}>
             <Text style={styles.label}>Tipo de trabajo:</Text>
             <Picker 
-                selectedValue={tipo}
-                onValueChange={setTipo}
+                selectedValue={jobTypes}
+                onValueChange={setTipos}
                 style={styles.input}
             >
-                {JOB_TYPES.map((jobType) => (
+                {jobTypes.map((jobType) => (
                     <Picker.Item key={jobType} label={jobType} value={jobType} />
                 ))}
             </Picker>

@@ -1,89 +1,121 @@
 // src/screens/HomeScreen.js
 import React, { useEffect, useState} from 'react';
-import { View, Text, Button, StyleSheet, FlatList, TouchableOpacity, SafeAreaView} from 'react-native';
-import { clearSession } from '../services/session';
+import { View, Text, Button, StyleSheet, FlatList, TouchableOpacity, SafeAreaView, ActivityIndicator} from 'react-native';
+import { clearSession, getSession } from '../services/session';
 import * as Location from 'expo-location'
+import { obtenerTrabajos, obtenerTiposTrabajo} from '../services/supabase';
 
-const JOB_TYPES = ['Todos', 'Construcción', 'Carpintería', 'Soldadura', 'Salud'];
 
-const mockJobs = [
-  { id: '1', tipo: 'Carpintería', titulo: 'Reparar muebles', lat: 19.43, lon: -99.13 },
-  { id: '2', tipo: 'Salud', titulo: 'Consulta médica a domicilio', lat: 19.44, lon: -99.15 },
-  { id: '3', tipo: 'Soldadura', titulo: 'Soldar portón', lat: 19.45, lon: -99.14 },
-];
 
 export default function HomeScreen() {
-    const [location, setLocation] = useState(null);
-    const [selectedType, setSelectedType] = useState('Todos');
-    const [filteredJobs, setFilteredJobs] = useState([])
+    const [trabajos, setTrabajos] = useState([]);
+    const [cargando, setCargando] = useState(true);
+    const [error, setError] = useState(null);
+    const [tipos, setTipos] = useState([])
+    const [tipoActivo, setTipoActivo] = useState(null);
+    const [usuarioId, setUsuarioId] = useState(null);
 
     useEffect(() => {
-        (async () => {
-            const { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted') return;
+        async function cargarTipos() {
+            try {
+                const data = await obtenerTiposTrabajo();
+                setTipos(data.map((t) => t.nombre));
+            } catch (e){
+                console.error('Error al consegir tipos', e);
+            }
+        }
 
-            const loc = await Location.getCurrentPositionAsync({});
-            setLocation(loc.coords);
+        cargarTipos();
+    }, []);
 
-            console.log('Ubicacion actual', location)
-        })();
+    useEffect(() => {
+        async function cargarTrabajos() {
+            try {
+                const { status } = await Location.requestForegroundPermissionsAsync();
+                if (status !== 'granted' ) {
+                    setError('permisis de ubicacion denegados');
+                    return
+                }
+
+                const session = await getSession();
+                const miUserId = session?.user?.id;
+                setUsuarioId(miUserId);
+
+
+                const  loc = await Location.getCurrentPositionAsync({});
+                const trabajos = await obtenerTrabajos();
+                console.log('Trabajos obtenidos:', trabajos);
+
+                let trabajosFiltrados = trabajos.filter((t) => t.user_id !== miUserId);
+                if (tipoActivo) { trabajosFiltrados = trabajosFiltrados.filter((t) => t.tipo === tipoActivo)}
+
+                const trabajosConDistancia = trabajosFiltrados.map((t) => {
+                    const distancia = calcularDistancia(
+                        loc.coords.latitude,
+                        loc.coords.longitude,
+                        t.lat,
+                        t.lon
+                    );
+                    return {...t, distancia };
+                });
+
+                trabajosConDistancia.sort((a, b) => a.distancia - b.distancia);
+                setTrabajos(trabajosConDistancia);
+            } catch (e) {
+                setError('Error al cargar Trabajos');
+                console.log(e);
+            } finally {
+                setCargando(false);
+            }
+        }
+
+        cargarTrabajos();
     },[]);
-
-    useEffect(() => {
-        if(!location) return;
-
-        const calculateDistance = (job) => {
-            const dx = job.lat - location.latitude;
-            const dy = job.lon - location.longitude;
-            return Math.sqrt(dx * dx + dy * dy);       
-        };
-
-        const jobs = mockJobs
-        .filter((job) => selectedType === 'Todos' || job.tipo === selectedType)
-        .map((job) => ({...job, distancia: calculateDistance(job) }))
-        .sort((a,b) => a.distancia - b.distancia);
-
-        setFilteredJobs(jobs);
-
-        console.log('Trabajos filtrados', filteredJobs)
-    },[selectedType, location])
-
-    const renderJob = ({item}) => {
-        return (
-            <View style={styles.card}>
-            <Text style={styles.titulo}>{item.titulo}</Text>
-            <Text>{item.tipo} - Distancia aprox: {item.distancia.toFixed(2)}</Text>
-        </View>
-        )
-    }
-
+    
+     if (cargando) return <ActivityIndicator style={{flex: 1}} />
+     if(error) return <Text>Error</Text>
+    
     return(
-        <View style={styles.container}>
-            <View style={styles.filtros}>
-                {JOB_TYPES.map((tipo) => (
-                    <TouchableOpacity 
-                        key={tipo}
-                        style={[styles.filtro, selectedType === tipo && styles.filtroActivo]}
-                        onPress={() => setSelectedType(tipo)}
-                        >
-                            <Text>{tipo}</Text>
-                        </TouchableOpacity>
-                ))}
-            </View>
-
-           <SafeAreaView>
-             <FlatList
-            data={filteredJobs}
+        <>
+        <View style={styles.filtros}>
+            {tipos.map((tipo) => (
+                <TouchableOpacity
+                    key={tipo}
+                    style={[styles.filtro, tipoActivo === tipo && styles.filtroActivo]}
+                    onPress={() => setTipoActivo((prev) => (prev === tipo ? null : tipo))}
+                >
+                    <Text >{tipo}</Text>
+                </TouchableOpacity>
+            ))}
+        </View>
+         <FlatList
+            data={trabajos}
             keyExtractor={(item) => item.id}
-            renderItem={renderJob}
-            contentContainerStyle={styles.lista}
-            ListEmptyComponent={<Text style={styles.empty}>No hay trabajos disponibles</Text>}
-            />
-           </SafeAreaView>
-
+            renderItem={({ item }) => (
+            <View style={styles.card}>
+                <Text style={styles.titulo}>{item.titulo}</Text>
+                <Text>{item.tipo} - Distancia: {item.distancia.toFixed(2)} km</Text>
             </View>
+        )}
+
+        />
+        </>
     );
 }
+
+ function calcularDistancia(lat1, lon1, lat2, lon2) {
+    const R = 6371; //el radio de la tierra
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a = 
+        Math.sin(dLat / 2) **2 +
+        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2)**2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+ }
+
+ function toRad(grados) {
+    return (grados * Math.PI) / 180;
+ }
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16 },
@@ -108,5 +140,15 @@ empty: {
   fontSize: 16,
   color: '#888',
 },
+card: {
+    backgroundColor: '#f0f0f0',
+    margin: 10,
+    padding: 15,
+    borderRadius: 10,
+  },
+  titulo: {
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
 
 });
