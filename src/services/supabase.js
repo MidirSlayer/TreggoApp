@@ -104,3 +104,15 @@ export async function obtenerTiposTrabajo() {
   if (!res.ok) throw new Error('Error al obtener tipos');
   return data;
 }
+
+export async function obtenerMisTrabajos(user_id) {
+  const res = await fetch(`${supabaseUrl}/rest/v1/trabajos?user_id=eq.${user_id}&select=*`, {
+    headers: {
+      apikey: supabaseAnonKey,
+    },
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error('Error al obtener tus trabajos')
+    return data;
+}

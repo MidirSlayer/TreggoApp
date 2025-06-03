@@ -4,7 +4,7 @@ import { View, Text, Button, StyleSheet, FlatList, TouchableOpacity, SafeAreaVie
 import { clearSession, getSession } from '../services/session';
 import * as Location from 'expo-location'
 import { obtenerTrabajos, obtenerTiposTrabajo} from '../services/supabase';
-
+import { Ionicons } from '@expo/vector-icons'
 
 
 export default function HomeScreen({navigation}) {
@@ -40,7 +40,7 @@ export default function HomeScreen({navigation}) {
         navigation.setOptions({
             headerRight: () => (
                 <TouchableOpacity onPress={cerrarSesion} style={{marginRight: 16}}>
-                    <Text style={{color: '#007aff'}}>Cerrar Session</Text>
+                    <Ionicons name="log-out-outline" size={24} color="#007AFF" />
                 </TouchableOpacity>
             )
         });
