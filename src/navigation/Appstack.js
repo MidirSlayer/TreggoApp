@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeScreen from "../screens/HomeScreen";
 import LoginScreen from "../screens/LoginScreen";
 import MainTabs from "./MainTabs";
+import RegisterScreen from "../screens/RegisterScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -16,6 +17,8 @@ export default function AppStack() {
             component={LoginScreen}
             options={{title: 'Login'}}
         />
+
+        <Stack.Screen name="Register" component={RegisterScreen} />
         </Stack.Navigator>
     );
 }

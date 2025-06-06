@@ -1,7 +1,7 @@
 import { getSession } from "./session";
 
-const supabaseUrl = 'https://sfbzcsxtuifipultcwpf.supabase.co'
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNmYnpjc3h0dWlmaXB1bHRjd3BmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgyOTM2MzUsImV4cCI6MjA2Mzg2OTYzNX0.PGUKSh2zIYItcsqf9EPQoXvUXUvX_Jha3CG85ZnWUU8';
+export const supabaseUrl = 'https://sfbzcsxtuifipultcwpf.supabase.co'
+export const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNmYnpjc3h0dWlmaXB1bHRjd3BmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgyOTM2MzUsImV4cCI6MjA2Mzg2OTYzNX0.PGUKSh2zIYItcsqf9EPQoXvUXUvX_Jha3CG85ZnWUU8';
 
 //funcion de registro
 export async function singUp(email, password) {
@@ -76,8 +76,17 @@ export async function refreshSession(refresh_token) {
     body: JSON.stringify({refresh_token}),
   });
 
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error?.descripcion || 'Error al renovar sesion');
+ const data = await res.json();
+
+ console.log('⚠️ Supabase respondió:', res.status, data);
+
+  if (!res.ok) {
+    console.error('❌ Error al renovar sesión:', data);
+    return { data: null, error: data };
+  }
+
+
+  return { data, error: null };
 }
 // funcion para obtener los datos de la lista
 export async function obtenerTrabajos () {

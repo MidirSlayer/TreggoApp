@@ -1,0 +1,38 @@
+import { supabaseAnonKey, supabaseUrl } from "./supabase";
+import { getSession } from "./session";
+
+export async function subirImagenPerfil (uri, userId) {
+    const nombreArchivo =`${userId}-${Date.now()}.jpg`;
+    const bucket = 'avatars';
+
+
+    const response = await fetch(uri);
+    const blob = await response.blob();
+
+    const session = await getSession()
+    const token = session.token;
+
+    const uploadUrl = `${supabaseUrl}/storage/v1/object/${bucket}/${nombreArchivo}`;
+
+    const res = await fetch(uploadUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'image/jpg',
+            'Authorization':`Bearer ${token}`
+        }, 
+        body: blob
+    });
+
+   if (!res.ok) {
+    const error = await res.text();
+    console.error('❌ Error al subir imagen:', error);
+    throw new Error('Error al subir imagen');
+  }
+
+  // ✅ URL pública
+  const url = `${supabaseUrl}/storage/v1/object/public/${bucket}/${nombreArchivo}`;
+  console.log('✅ Imagen subida correctamente:', url);
+  return url;
+
+    return 
+}
