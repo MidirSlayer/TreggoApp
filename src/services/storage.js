@@ -2,6 +2,8 @@ import { supabaseAnonKey, supabaseUrl } from "./supabase";
 import { getSession } from "./session";
 
 export async function subirImagenPerfil (uri, userId) {
+
+    console.log(uri)
     const nombreArchivo =`${userId}-${Date.now()}.jpg`;
     const bucket = 'avatars';
 

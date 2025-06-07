@@ -35,7 +35,10 @@ export async function signIn(email, password) {
   console.log('🧪 Login response:', data); // útil para debug
 
   if (!res.ok) {
-    throw new Error(data.error?.description || 'Error al iniciar sesión');
+    if (data.code === 400) {
+      throw new Error('Correo o contraseña incorrectos.')
+    }
+    
   }
 
   return data; // ✅ contiene: access_token, refresh_token, user

@@ -20,12 +20,10 @@ export default function PerfilForm({ initialData = {}, onSubmit}) {
         if (!result.canceled && result.assets?.length > 0) {
             setAvatar(result.assets[0].uri);
             console.log('✅ Imagen seleccionada:', result.assets[0].uri);
-            } else {
+        } else {
             console.log('❌ Imagen cancelada');
-            }
+        }
 
-
-        
     }
 
     function guardar () {

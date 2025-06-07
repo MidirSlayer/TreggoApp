@@ -10,6 +10,12 @@ export default function LoginScreen({ navigation }) {
     
     const handleLogin = async () => {
       try {     
+
+        if (!email || !password) {
+            Alert.alert('Campos vacíos', 'Por favor, completa tu email y contraseña.');
+            return;
+        }
+
         const { access_token, refresh_token, user } = await signIn(email, password);
         console.log('REFRESHTOKEN:', refresh_token); // 👈 Para confirmar
         await saveSession({ access_token, refresh_token, user });
