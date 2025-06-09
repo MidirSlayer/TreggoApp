@@ -3,20 +3,43 @@ import { View, Text, TextInput, Button, Alert, StyleSheet } from "react-native";
 import { singUp } from "../services/supabase";
 import PerfilForm from "../components/PerfilForm";
 import { actualizarPerfil, crearPerfil } from "../services/perfil";
-import { subirImagenPerfil } from "../services/storage";
+import { subirImagenRegistro } from "../services/storage";
  
 export default function RegisterScreen({ navigation }) {
     const [ email, setEmail ] = useState('');
     const [ password, setPassword ] = useState('');
     const [modeCreator, setModeCreator] = useState(false);
     const [id, setId] = useState()
+    const [access_token, setAcces_token] = useState()
+    const [confirm, setConfirm] = useState('');
 
     const handleRegister = async () => {
         try {
+            if (!email || !password || !confirm) {
+                Alert.alert('Campos incompletos', 'Por favor, completa todos los campos.');
+                return;
+                }
+
+                if (!email.includes('@') || !email.includes('.')) {
+                Alert.alert('Email inválido', 'Ingresa un email válido.');
+                return;
+                }
+
+                if (password !== confirm) {
+                Alert.alert('Contraseñas no coinciden', 'Verifica que ambas contraseñas sean iguales.');
+                return;
+                }
+
+                if (password.length < 6) {
+                Alert.alert('Contraseña débil', 'Debe tener al menos 6 caracteres.');
+                return;
+                }
+
             const user = await singUp(email, password);
-            console.log (user.access_token)
+            console.log (user.user.id)
             console.log('Registrado', user);
-            setId(user.id)
+            setAcces_token(user.access_token)
+            setId(user.user.id)
             setModeCreator(true)
         } catch (error) {
             Alert.alert('Error', error.message);
@@ -25,25 +48,22 @@ export default function RegisterScreen({ navigation }) {
 
     if (modeCreator) { 
         return (
+            <View style={{flex: 1, justifyContent: 'space-around'}}>
             <PerfilForm
-                onSubmit={async(datos) =>{
-                    console.log(datos)
-                    console.log(id)
-                    let urlFinal = datos.avatar_url
+                onSubmit={async (datos) => {
 
-                    if(datos.avatar_url?.startsWith('file')) {
-                        urlFinal = await subirImagenPerfil(datos.avatar_url, id)
-                    }
-
-                    const datosFinales = {...datos, avatar_url: urlFinal}
+                      const url = await subirImagenRegistro (datos.avatar_url, id, access_token)
+                        console.log('✅ Imagen subida desde registro');
+                    
+                    const datosFinales = { ...datos, avatar_url: url };
 
                     await crearPerfil(id, datosFinales);
-                    Alert.alert('perfil creado')
-
-                    setModeCreator(false)
-                    navigation.replace('Login')
+                    Alert.alert('Perfil creado');
+                    setModeCreator(false);
+                    navigation.replace('Login');
                 }}
             />
+            </View>
         )
     }
 
@@ -66,6 +86,16 @@ export default function RegisterScreen({ navigation }) {
                
                 onChangeText={setPassword}
                 value={password}
+            />
+
+             <TextInput 
+                placeholder=" Confirmar Contraseña"
+                style={styles.input}
+                secureTextEntry
+                autoCapitalize="none"
+               
+                onChangeText={setConfirm}
+                value={confirm}
             />
 
             <Button title=" Registrarse" onPress={handleRegister} />

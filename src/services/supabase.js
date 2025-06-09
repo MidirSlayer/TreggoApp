@@ -15,7 +15,12 @@ export async function singUp(email, password) {
    });
    
    const data = await res.json();
-   if(!res) throw new Error(data.error?.message || 'Error al registrar');
+   console.log(data)
+   if(!res.ok) {
+    if (data.code === 422) {
+      throw new Error('Ya existe un cuenta con ese correo')
+    }
+   }
    return data;
 }
 
