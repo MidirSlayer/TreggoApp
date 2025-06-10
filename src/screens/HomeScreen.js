@@ -120,7 +120,7 @@ export default function HomeScreen({navigation}) {
         <FlatList
             data={trabajos}
             keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (<TrabajoCard trabajo={item} onPress={(t) => console.log('Ver mas', t)} />)}
+            renderItem={({ item }) => (<TrabajoCard trabajo={item} onPress={(t) => navigation.navigate('DetalleTrabajo', {trabajo: t}) } />)}
         />
         </>
     );
