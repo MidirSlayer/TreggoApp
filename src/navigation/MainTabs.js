@@ -32,7 +32,7 @@ export default function MainTabs () {
             >
             <Tab.Screen name="Inicio" component={HomeScreen} />
             <Tab.Screen name= "Publicar" component={PostJobScreen} />
-            <Tab.Screen name="Buscar" component={PlaceholderScreen} />
+            
             <Tab.Screen name="Perfil" component={ProfileScreen} />
         </Tab.Navigator>
     )
