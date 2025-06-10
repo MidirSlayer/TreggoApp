@@ -1,11 +1,15 @@
 import React, {useEffect, useState, useLayoutEffect, use, act} from "react";
-import { View, Text, FlatList, StyleSheet, Alert, TouchableOpacity} from "react-native";
+import { View, FlatList, StyleSheet, Alert, TouchableOpacity} from "react-native";
 import { getSession } from "../services/session";
 import { obtenerMisTrabajos } from "../services/supabase";
 import { actualizarPerfil, crearPerfil, obtenerPerfil } from "../services/perfil";
 import { Ionicons } from '@expo/vector-icons'
 import PerfilForm from "../components/PerfilForm";
 import { subirImagenPerfil } from "../services/storage";
+import TrabajoCard from "../components/TrabajoCard";
+import Texto from "../components/Text";
+import { useBackHandler } from '@react-native-community/hooks';
+
 
 export default function ProfileScreen({navigation}) {
     const [user,setUser] = useState(null)
@@ -27,6 +31,15 @@ export default function ProfileScreen({navigation}) {
         cargarPerfil();
     }, []);
 
+    useBackHandler(() => {
+        if(modoEditar) {
+            setModoEditar(false);
+            return true;
+        }
+
+        return false;
+    });
+
     async function cargarDatos () {
 
         const datos = await obtenerPerfil(user.id);
@@ -44,7 +57,7 @@ export default function ProfileScreen({navigation}) {
         })
     }, [navigation, user])
 
-    if (!user) return <Text>Cargando...</Text>
+    if (!user) return <Texto>Cargando...</Texto>
 
     if (modoEditar) {
         return (
@@ -79,20 +92,16 @@ export default function ProfileScreen({navigation}) {
     return (
         <View style={styles.container}>
 
-            <Text style={styles.titulo}>Hola, {user.email}</Text>
-            <Text style={styles.subtitulo}>Tus trabajos publicados:</Text>
+            <Texto type="title">Hola, {user.email}</Texto>
+            <Texto type="subtitle">Tus trabajos publicados:</Texto>
 
             <FlatList
                 data={trabajos}
                 keyExtractor={(item => item.id)}
                 renderItem={({item}) => (
-                    <View style={styles.card}>
-                    <Text style={styles.cardTitulo}>{item.titulo}</Text>
-                    <Text>{item.tipo}</Text>
-                    <Text>{new Date(item.fecha).toLocaleDateString()}</Text>
-                </View>
+                    <TrabajoCard trabajo={item} />
                 )}
-                ListEmptyComponent={<Text style={styles.empty}>No hay publicaciones</Text>}
+                ListEmptyComponent={<Texto type="muted">No hay publicaciones</Texto>}
             />
         </View>
     )
@@ -103,12 +112,6 @@ const styles = StyleSheet.create({
   container: { flex: 1, padding: 16 },
   titulo: { fontSize: 20, fontWeight: 'bold', marginBottom: 8 },
   subtitulo: { fontSize: 16, marginBottom: 12 },
-  card: {
-    backgroundColor: '#eee',
-    padding: 12,
-    marginBottom: 10,
-    borderRadius: 8,
-  },
   cardTitulo: { fontWeight: 'bold' },
-  empty: { textAlign: 'center', marginTop: 50, color: '#999' },
+  empty: { textoTextoAlign: 'center', marginTop: 50, color: '#999' },
 });

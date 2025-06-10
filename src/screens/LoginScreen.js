@@ -1,7 +1,10 @@
 import React, { useState} from "react";
-import { View, Text, TextInput, Button, Alert, StyleSheet } from "react-native";
+import { View, Text, Alert, StyleSheet } from "react-native";
 import { signIn } from "../services/supabase"; 
 import { saveSession } from "../services/session";
+import Input from "../components/Input";
+import Button from "../components/Button";
+import Texto from "../components/Text";
 
 export default function LoginScreen({ navigation }) {
     const [email, setEmail] = useState('');
@@ -30,16 +33,16 @@ export default function LoginScreen({ navigation }) {
 
     return(
         <View style={styles.container}>
-            <Text style={ styles.title}>Iniciar Sesión</Text>
-            <TextInput
-                style={styles.input}
+            <Texto type="title">Iniciar Sesión</Texto>
+            <Input
+                
                 placeholder="Email"
                 autoCapitalize="none"
                 onChangeText={setEmail}
                 keyboardType="email-address"
                 value={email} />
-            <TextInput
-                style={styles.input}
+            <Input
+                
                 placeholder="contraseña"
                 secureTextEntry
                 autoCapitalize="none"
@@ -49,7 +52,7 @@ export default function LoginScreen({ navigation }) {
 
             <Button title="Entrar"  onPress={handleLogin}/>
 
-            <Text style={styles.link} onPress={() =>navigation.navigate('Register')}>¿No tienes cuenta? Registrate.</Text>
+            <Texto style={styles.link} onPress={() =>navigation.navigate('Register')}>¿No tienes cuenta? Registrate.</Texto>
         </View>
     )
 }
@@ -64,12 +67,6 @@ const styles = StyleSheet.create({
         fontSize: 24,
         marginBottom: 20,
         textAlign: 'center'
-    }, 
-    input: {
-        borderWidth: 1,
-        padding: 10,
-        marginBottom: 15,
-        borderRadius: 5
     }, 
     link: {
         color: 'blue',

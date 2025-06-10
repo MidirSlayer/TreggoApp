@@ -1,6 +1,10 @@
 import React, { useState, useEffect} from "react";
-import { View, TextInput, Button, Text, Image, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity } from "react-native";
 import * as ImagePicker from 'expo-image-picker';
+import Input from "./Input";
+import Button from "./Button";
+import Avatar from "./Avatar";
+import Texto from "./Text";
 
 export default function PerfilForm({ initialData = {}, onSubmit}) {
     const [nombre, setNombre] = useState(initialData.nombre || '');
@@ -33,18 +37,14 @@ export default function PerfilForm({ initialData = {}, onSubmit}) {
     return ( 
         <View>
             <TouchableOpacity onPress={elegirFoto}>
-                {avatar ? (
-                    <Image source={{uri: avatar}} style={{width: 100, height: 100, borderRadius: 50}} />
-
-                ) : ( <View style={{width: 100, height: 100, backgroundColor: '#ccc', borderRadius: 50, justifyContent: 'center', alignItems: 'center'}}>
-                   <Text>Foto</Text> 
-                </View>)
-            }
+                   <Avatar uri={avatar} />
             </TouchableOpacity>
-
-            <TextInput placeholder="Nombre" value={nombre} onChangeText={setNombre} style={{marginVertical: 8}} />
-            <TextInput placeholder="Telefono" value={telefono} onChangeText={setTelefono} style={{marginVertical: 8}} />
-            <TextInput placeholder="Ciudad" value={ciudad} onChangeText={setCiudad} style={{marginVertical: 8}}/>
+            <Texto type="subtitle"> Nombre</Texto>
+            <Input placeholder="Nombre" value={nombre} onChangeText={setNombre} style={{marginVertical: 8}} />
+            <Texto type="subtitle"> Numero de telefono</Texto>
+            <Input placeholder="Telefono" value={telefono} onChangeText={setTelefono} style={{marginVertical: 8}} />
+            <Texto type="subtitle"> Ciudad</Texto>
+            <Input placeholder="Ciudad" value={ciudad} onChangeText={setCiudad} style={{marginVertical: 8}}/>
             <Button title="Guardar" onPress={guardar}/>
         </View>
     );

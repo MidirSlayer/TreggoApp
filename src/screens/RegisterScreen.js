@@ -1,9 +1,12 @@
 import React, { useState} from "react";
-import { View, Text, TextInput, Button, Alert, StyleSheet } from "react-native";
+import { View, Alert, StyleSheet } from "react-native";
 import { singUp } from "../services/supabase";
 import PerfilForm from "../components/PerfilForm";
 import { actualizarPerfil, crearPerfil } from "../services/perfil";
 import { subirImagenRegistro } from "../services/storage";
+import Input from "../components/Input";
+import Button from "../components/Button";
+import Texto from "../components/Text";
  
 export default function RegisterScreen({ navigation }) {
     const [ email, setEmail ] = useState('');
@@ -69,28 +72,24 @@ export default function RegisterScreen({ navigation }) {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Crear Cuenta</Text>
-            <TextInput
+            <Texto style={styles.title}>Crear Cuenta</Texto>
+            <Input
                 placeholder="Email"
-                style={styles.input}
                 autoCapitalize="none"
                  keyboardType="email-address"
                 onChangeText={setEmail}
                 value={email}
             />
-            <TextInput 
+            <Input 
                 placeholder="Contraseña"
-                style={styles.input}
                 secureTextEntry
                 autoCapitalize="none"
-               
                 onChangeText={setPassword}
                 value={password}
             />
 
-             <TextInput 
+             <Input 
                 placeholder=" Confirmar Contraseña"
-                style={styles.input}
                 secureTextEntry
                 autoCapitalize="none"
                
@@ -99,7 +98,7 @@ export default function RegisterScreen({ navigation }) {
             />
 
             <Button title=" Registrarse" onPress={handleRegister} />
-            <Text style={ styles.link} onPress={() => navigation.navigate('Login')} >¿Ya tienes cuenta? Inicia Sesion</Text>
+            <Texto style={ styles.link} onPress={() => navigation.navigate('Login')} >¿Ya tienes cuenta? Inicia Sesion</Texto>
         </View>
     )
 }
@@ -114,12 +113,6 @@ const styles = StyleSheet.create({
     fontSize: 24, 
     marginBottom: 20, 
     textAlign: 'center' 
-    },
-  input: { 
-    borderWidth: 1,
-     padding: 10, 
-     marginBottom: 15, 
-     borderRadius: 5 
     },
   link: { 
     color: 'blue',

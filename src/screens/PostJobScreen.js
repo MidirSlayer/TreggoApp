@@ -1,9 +1,12 @@
 import React, { useState, useEffect} from "react";
-import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
+import { View, StyleSheet, Alert } from "react-native";
 import { Picker } from '@react-native-picker/picker';
 import * as Location from 'expo-location';
 import { publicarTrabajos, obtenerTiposTrabajo} from "../services/supabase";
 import { getSession, } from "../services/session";
+import Input from "../components/Input";
+import Button from "../components/Button";
+import Texto from "../components/Text";
 
 
 
@@ -75,7 +78,7 @@ export default function PostJobScreen () {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.label}>Tipo de trabajo:</Text>
+            <Texto type="subtitle">Tipo de trabajo:</Texto>
             <Picker 
                 selectedValue={jobTypes}
                 onValueChange={setTipos}
@@ -86,19 +89,18 @@ export default function PostJobScreen () {
                 ))}
             </Picker>
 
-            <Text style={styles.label}>Titulo:</Text>
-            <TextInput
-                style={styles.input}
+            <Texto type="subtitle">Titulo:</Texto>
+            <Input
                 value={titulo}
-                onChangeText={setTitulo}
+                onChangeTexto={setTitulo}
                 placeholder="Ej. Arreglo de puerta"
             />
 
-            <Text style={styles.label}>Descripcion:</Text>
-            <TextInput 
-                style={[styles.input, styles.textArea]}
+            <Texto type="subtitle">Descripcion:</Texto>
+            <Input 
+                style={styles.textoTextoArea}
                 value={descripcion}
-                onChangeText={setDescripcion}
+                onChangeTexto={setDescripcion}
                 placeholder="Escribe detalles del servicio"
                 multiline
                 numberOfLines={4}
@@ -119,8 +121,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 16,
   },
-  textArea: {
+  textoTextoArea: {
     height: 100,
-    textAlignVertical: 'top',
+    textoTextoAlignVertical: 'top',
   },
 });
