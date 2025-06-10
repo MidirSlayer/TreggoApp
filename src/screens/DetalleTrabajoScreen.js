@@ -1,15 +1,32 @@
-import React from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
+import React, { useState } from "react";
+import { View, StyleSheet, ScrollView, TouchableOpacity, Alert} from "react-native";
 import Texto from "../components/Text";
 import Tag from "../components/Tag";
 import Button from "../components/Button";
 import Avatar from "../components/Avatar";
 import { spacing, colors, borderRadius } from "../theme";
+import { Ionicons } from '@expo/vector-icons' 
 
 export default function DetalleTrabajoScreen ({route, navigation}) {
     const { trabajo } = route.params;
+    const [favorito, setFavorito] = useState(false);
 
     const fecha = new Date(trabajo.fecha).toLocaleDateString();
+
+    function marcarFav () {
+      setFavorito(!favorito);
+    }
+
+    function reportar () {
+      Alert.alert(
+        'Reportar trabajo',
+        '¿Esta seguro de que desea reportar este trabajo',
+        [
+          {text: 'Cancelar', style: 'cancel'},
+          {text: 'Reportar', onPress: () => Alert.alert('Gracias', 'Reporte Enviado')}
+        ]
+      );
+    }
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
@@ -21,6 +38,14 @@ export default function DetalleTrabajoScreen ({route, navigation}) {
                 <Texto type="title">{trabajo.titulo}</Texto>
                 <Texto type="muted">{fecha}</Texto>
               </View>
+
+              <TouchableOpacity onPress={marcarFav}>
+                <Ionicons
+                  name={favorito ? 'heart' : 'heart-outline'}
+                  size={24}
+                  color={favorito ? colors.primary : colors.subtext}
+                /> 
+              </TouchableOpacity>
             </View>
 
             <Tag label={trabajo.tipo} />
@@ -38,6 +63,13 @@ export default function DetalleTrabajoScreen ({route, navigation}) {
                 style={{marginTop: spacing.lg}}
                 onPress={() => alert('Funcionalidad pendiente')}
             />
+
+            <TouchableOpacity onPress={reportar} style={styles.reportar}>
+              <Ionicons name='flag-outline' size={18} color={colors.danger} />
+              <Texto type='muted' style={{marginLeft : 6, colors: colors.danger}}>
+                reportar trabajo
+              </Texto>
+            </TouchableOpacity>
         </ScrollView>
     )
 }
@@ -63,5 +95,10 @@ const styles = StyleSheet.create({
   descripcion: {
     marginVertical: spacing.md,
     lineHeight: 20,
+  },
+    reportar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: spacing.lg,
   },
 });
