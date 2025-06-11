@@ -6,7 +6,7 @@ import { spacing } from "../theme";
 import { getSession } from "../services/session";
 import { supabaseAnonKey, supabaseUrl } from "../services/supabase";
 
-export default function RecargarSaldoScreen () {
+export default function RecargarSaldoScreen ({navigation}) {
     const [saldo, setSaldo] = useState(null);
     const [cargando, setCargando] = useState(false);
     const [userId, setUserId] = useState(null);
