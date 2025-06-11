@@ -8,6 +8,7 @@ import PerfilForm from "../components/PerfilForm";
 import { subirImagenPerfil } from "../services/storage";
 import TrabajoCard from "../components/TrabajoCard";
 import Texto from "../components/Text";
+import Button from "../components/Button";
 import { useBackHandler } from '@react-native-community/hooks';
 
 
@@ -103,6 +104,12 @@ export default function ProfileScreen({navigation}) {
                 )}
                 ListEmptyComponent={<Texto type="muted">No hay publicaciones</Texto>}
             />
+
+            <Button
+                title="Recargar saldo"
+                onPress={() => navigation.navigate('RecargarSaldo')}
+            />
+
         </View>
     )
     

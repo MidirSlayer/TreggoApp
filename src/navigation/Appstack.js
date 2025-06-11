@@ -5,6 +5,7 @@ import LoginScreen from "../screens/LoginScreen";
 import MainTabs from "./MainTabs";
 import RegisterScreen from "../screens/RegisterScreen";
 import DetalleTrabajoScreen from "../screens/DetalleTrabajoScreen";
+import RecargarSaldoScreen from "../screens/RecargarSaldoScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +23,8 @@ export default function AppStack() {
         <Stack.Screen name="Register" component={RegisterScreen} />
 
         <Stack.Screen name="DetalleTrabajo" component={DetalleTrabajoScreen} />
+
+        <Stack.Screen name="RecargarSaldo" component={RecargarSaldoScreen} />
         </Stack.Navigator>
     );
 }
