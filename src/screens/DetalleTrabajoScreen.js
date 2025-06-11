@@ -6,6 +6,8 @@ import Button from "../components/Button";
 import Avatar from "../components/Avatar";
 import { spacing, colors, borderRadius } from "../theme";
 import { Ionicons } from '@expo/vector-icons' 
+import { contactarProveedor } from "../services/contactarProveedor";
+import { getSession } from "../services/session";
 
 export default function DetalleTrabajoScreen ({route, navigation}) {
     const { trabajo } = route.params;
@@ -26,6 +28,23 @@ export default function DetalleTrabajoScreen ({route, navigation}) {
           {text: 'Reportar', onPress: () => Alert.alert('Gracias', 'Reporte Enviado')}
         ]
       );
+    }
+
+    async function manejarContacto(trabajo) {
+      const session = await getSession();
+      console.log(session)
+      const resultado = await contactarProveedor({
+        proveedoId: trabajo.user_id,
+        clienteId: session.user.id,
+        trabajoId: trabajo.id,
+        comision: 0.25
+      })
+
+      if (resultado.ok) {
+        Alert.alert('Exito', 'Puedes contactar al proveedor')
+      } else {
+        Alert.alert('No disponible', resultado.mensaje);
+      }
     }
 
     return (
@@ -61,7 +80,7 @@ export default function DetalleTrabajoScreen ({route, navigation}) {
             <Button
                 title="contactar"
                 style={{marginTop: spacing.lg}}
-                onPress={() => alert('Funcionalidad pendiente')}
+                onPress={() => manejarContacto(trabajo)}
             />
 
             <TouchableOpacity onPress={reportar} style={styles.reportar}>
