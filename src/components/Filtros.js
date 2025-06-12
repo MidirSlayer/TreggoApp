@@ -2,7 +2,7 @@ import React from "react";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { colors, spacing, borderRadius } from "../theme";
 
-export default function Filtros ({ tipos, activo, onSelect }) {
+export default function Filtros ({ tipos, activo , onSelect }) {
     return (
         <View style={styles.container}>
             {tipos.map((tipo) => {

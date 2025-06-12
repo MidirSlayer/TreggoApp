@@ -29,6 +29,7 @@ export default function HomeScreen({navigation}) {
                 console.error('Error al consegir tipos', e);
             }
         }
+
         async function cargarTrabajos() {
             try {
                 const { status } = await Location.requestForegroundPermissionsAsync();
@@ -41,6 +42,7 @@ export default function HomeScreen({navigation}) {
                 const miUserId = session?.user?.id;
                 setUsuarioId(miUserId);
 
+               setTipoActivo('Todos')
 
                 const  loc = await Location.getCurrentPositionAsync({});
                 const trabajos = await obtenerTrabajos();
@@ -81,7 +83,7 @@ export default function HomeScreen({navigation}) {
         if (tipoActivo === 'Todos') {
             setTrabajos(todosLosTrabajos);
         } else {
-            const filtrados = todosLosTrabajos.filter(t => t.tipo === tipoActivo);
+            const filtrados = todosLosTrabajos.filter((t) => tipoActivo === 'Todos' ? true : t.tipo === tipoActivo);
             setTrabajos(filtrados);
         }
         }, [tipoActivo, todosLosTrabajos]);
