@@ -27,7 +27,8 @@ export default function MainTabs () {
                 },
 
                 tabBarActiveTintColor: '#007aff',
-                tabBarInactiveTintColor: 'gray'
+                tabBarInactiveTintColor: 'gray',
+                headerShown: false
             })}
             >
             <Tab.Screen name="Inicio" component={HomeScreen} />
