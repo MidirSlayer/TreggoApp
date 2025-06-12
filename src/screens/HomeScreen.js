@@ -86,25 +86,6 @@ export default function HomeScreen({navigation}) {
         }
         }, [tipoActivo, todosLosTrabajos]);
 
-
-    async function cerrarSesion() {
-        await clearSession();
-        navigation.reset({
-            index: 0,
-            routes: [{name: 'Login'}]
-        });
-    }
-
-    useLayoutEffect(() => {
-        navigation.setOptions({
-            headerRight: () => (
-                <TouchableOpacity onPress={cerrarSesion} style={{marginRight: 16}}>
-                    <Ionicons name="log-out-outline" size={24} color="#007AFF" />
-                </TouchableOpacity>
-            )
-        });
-    }, [navigation])
-
     
      if (cargando) return <ActivityIndicator style={{flex: 1}} />
      if(error) return <Texto>Error</Texto>
