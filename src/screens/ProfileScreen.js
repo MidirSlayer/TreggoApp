@@ -10,6 +10,7 @@ import TrabajoCard from "../components/TrabajoCard";
 import Texto from "../components/Text";
 import Button from "../components/Button";
 import { useBackHandler } from '@react-native-community/hooks';
+import { asegurarCredito } from "../services/AsegurarCredito";
 
 
 export default function ProfileScreen({navigation}) {
@@ -23,6 +24,8 @@ export default function ProfileScreen({navigation}) {
         async function cargarPerfil() {
             const session = await getSession();
             setUser(session.user);
+
+            await asegurarCredito();
 
             const misTrabajos = await obtenerMisTrabajos(session.user.id)
             setTrabajos(misTrabajos)
@@ -104,12 +107,6 @@ export default function ProfileScreen({navigation}) {
                 )}
                 ListEmptyComponent={<Texto type="muted">No hay publicaciones</Texto>}
             />
-
-            <Button
-                title="Recargar saldo"
-                onPress={() => navigation.navigate('RecargarSaldo')}
-            />
-
         </View>
     )
     

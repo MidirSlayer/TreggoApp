@@ -2,7 +2,7 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeScreen from "../screens/HomeScreen";
 import LoginScreen from "../screens/LoginScreen";
-import MainTabs from "./MainTabs";
+import DrawerNavigator from "./DrawerNavigatio";
 import RegisterScreen from "../screens/RegisterScreen";
 import DetalleTrabajoScreen from "../screens/DetalleTrabajoScreen";
 import RecargarSaldoScreen from "../screens/RecargarSaldoScreen";
@@ -12,7 +12,7 @@ const Stack = createNativeStackNavigator();
 export default function AppStack() {
     return (
         <Stack.Navigator screenOptions={{headerShown: false}}>
-        <Stack.Screen name="Main" component={MainTabs} />
+        <Stack.Screen name="Main" component={DrawerNavigator} />
         
         <Stack.Screen
             name="Login"
