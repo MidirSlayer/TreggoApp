@@ -22,9 +22,14 @@ export default function LoginScreen({ navigation }) {
         const { access_token, refresh_token, user } = await signIn(email, password);
         console.log('REFRESHTOKEN:', refresh_token); // 👈 Para confirmar
         await saveSession({ access_token, refresh_token, user });
-
+        if (user) {
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'Main' }],
+            });
+}
         //Alert.alert('Éxito', 'Sesión iniciada');
-        navigation.replace('Main')
+        
       } catch (error) {
         console.log('ERROR al iniciar sesion', error.message);
         Alert.alert('Error', error.message);
