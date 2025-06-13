@@ -1,5 +1,5 @@
 import React, { useState} from "react";
-import { View, Text, Alert, StyleSheet } from "react-native";
+import { View, Text, Alert, StyleSheet, Image} from "react-native";
 import { signIn } from "../services/supabase"; 
 import { saveSession } from "../services/session";
 import Input from "../components/Input";
@@ -23,7 +23,7 @@ export default function LoginScreen({ navigation }) {
         console.log('REFRESHTOKEN:', refresh_token); // 👈 Para confirmar
         await saveSession({ access_token, refresh_token, user });
 
-        Alert.alert('Éxito', 'Sesión iniciada');
+        //Alert.alert('Éxito', 'Sesión iniciada');
         navigation.replace('Main')
       } catch (error) {
         console.log('ERROR al iniciar sesion', error.message);
@@ -33,6 +33,9 @@ export default function LoginScreen({ navigation }) {
 
     return(
         <View style={styles.container}>
+            <View style={{alignItems: 'center',}}>
+                <Image source={require('../../assets/Treggo.png')} style={{width: 500, height: 150, marginTop: -200}}/>
+            </View>
             <Texto type="title">Iniciar Sesión</Texto>
             <Input
                 

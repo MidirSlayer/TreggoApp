@@ -1,5 +1,5 @@
 import React, { useState} from "react";
-import { View, Alert, StyleSheet } from "react-native";
+import { View, Alert, StyleSheet, Image } from "react-native";
 import { singUp } from "../services/supabase";
 import PerfilForm from "../components/PerfilForm";
 import { actualizarPerfil, crearPerfil } from "../services/perfil";
@@ -49,29 +49,12 @@ export default function RegisterScreen({ navigation }) {
         }
     }
 
-    if (modeCreator) { 
-        return (
-            <View style={{flex: 1, justifyContent: 'space-around'}}>
-            <PerfilForm
-                onSubmit={async (datos) => {
-
-                      const url = await subirImagenRegistro (datos.avatar_url, id, access_token)
-                        console.log('✅ Imagen subida desde registro');
-                    
-                    const datosFinales = { ...datos, avatar_url: url };
-
-                    await crearPerfil(id, datosFinales);
-                    Alert.alert('Perfil creado');
-                    setModeCreator(false);
-                    navigation.replace('Login');
-                }}
-            />
-            </View>
-        )
-    }
-
     return (
         <View style={styles.container}>
+            <View style={{alignItems: 'center',}}>
+                <Image source={require('../../assets/Treggo.png')} style={{width: 500, height: 150, marginTop: -200}}/>
+            </View>
+
             <Texto style={styles.title}>Crear Cuenta</Texto>
             <Input
                 placeholder="Email"
