@@ -4,7 +4,7 @@ import { TextInput, StyleSheet } from 'react-native';
 import { colors, spacing, borderRadius, fonts } from '../theme';
 
 export default function Input({ style, ...props }) {
-  return <TextInput style={[styles.input, style]} {...props} />;
+  return <TextInput style={[styles.input, style]} placeholderTextColor={colors.subtext} {...props} />;
 }
 
 const styles = StyleSheet.create({
@@ -18,6 +18,6 @@ const styles = StyleSheet.create({
     fontSize: fonts.body.fontSize,
     color: colors.text,
     marginBottom: spacing.md,
-    marginLeft: 5
+    marginLeft: 5,
   },
 });

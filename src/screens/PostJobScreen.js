@@ -7,13 +7,14 @@ import { getSession, } from "../services/session";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import Texto from "../components/Text";
+import { colors } from "../theme";
 
 
 
 export default function PostJobScreen () {
     const [tipo, setTipos] = useState([]);
-    const [titulo, setTitulo] = useState();
-    const [descripcion, setDescripcion] = useState()
+    const [titulo, setTitulo] = useState('');
+    const [descripcion, setDescripcion] = useState('')
     const [jobTypes, setJobTypes] = useState([])
 
     useEffect(() => {
@@ -32,6 +33,7 @@ export default function PostJobScreen () {
     const handleSubmit = async() => {
         if (!titulo || !descripcion) {
             Alert.alert('Campos requeridos', 'Completa los campos');
+            console.log('Campos', {titulo, tipo, descripcion})
             return;
         }
 
@@ -82,7 +84,7 @@ export default function PostJobScreen () {
             <Picker 
                 selectedValue={jobTypes}
                 onValueChange={setTipos}
-                style={styles.input}
+                style={{color: colors.text}}
             >
                 {jobTypes.map((jobType) => (
                     <Picker.Item key={jobType} label={jobType} value={jobType} />
@@ -92,7 +94,7 @@ export default function PostJobScreen () {
             <Texto type="subtitle">Titulo:</Texto>
             <Input
                 value={titulo}
-                onChangeTexto={setTitulo}
+                onChangeText={setTitulo}
                 placeholder="Ej. Arreglo de puerta"
             />
 
@@ -100,7 +102,7 @@ export default function PostJobScreen () {
             <Input 
                 
                 value={descripcion}
-                onChangeTexto={setDescripcion}
+                onChangeText={setDescripcion}
                 placeholder="Escribe detalles del servicio"
                 multiline
                 numberOfLines={4}
