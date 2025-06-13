@@ -12,8 +12,8 @@ import Texto from "../components/Text";
 
 export default function PostJobScreen () {
     const [tipo, setTipos] = useState([]);
-    const [titulo, setTitulo] = useState('');
-    const [descripcion, setDescripcion] = useState('')
+    const [titulo, setTitulo] = useState();
+    const [descripcion, setDescripcion] = useState()
     const [jobTypes, setJobTypes] = useState([])
 
     useEffect(() => {
@@ -98,7 +98,7 @@ export default function PostJobScreen () {
 
             <Texto type="subtitle">Descripcion:</Texto>
             <Input 
-                style={styles.textoTextoArea}
+                
                 value={descripcion}
                 onChangeTexto={setDescripcion}
                 placeholder="Escribe detalles del servicio"
@@ -120,6 +120,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 8,
     marginBottom: 16,
+    textDecorationColor: 'black'
   },
   textoTextoArea: {
     height: 100,
