@@ -1,9 +1,6 @@
 import React, { useState} from "react";
 import { View, Alert, StyleSheet, Image } from "react-native";
 import { singUp } from "../services/supabase";
-import PerfilForm from "../components/PerfilForm";
-import { actualizarPerfil, crearPerfil } from "../services/perfil";
-import { subirImagenRegistro } from "../services/storage";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import Texto from "../components/Text";
@@ -56,6 +53,7 @@ export default function RegisterScreen({ navigation }) {
             </View>
 
             <Texto style={styles.title}>Crear Cuenta</Texto>
+            <Texto type="body">Correo Electronico</Texto>
             <Input
                 placeholder="Email"
                 autoCapitalize="none"
@@ -63,6 +61,7 @@ export default function RegisterScreen({ navigation }) {
                 onChangeText={setEmail}
                 value={email}
             />
+            <Texto type="body">Contraseña</Texto>
             <Input 
                 placeholder="Contraseña"
                 secureTextEntry
@@ -70,7 +69,7 @@ export default function RegisterScreen({ navigation }) {
                 onChangeText={setPassword}
                 value={password}
             />
-
+            <Texto type="body">Confirmar contraseña</Texto>
              <Input 
                 placeholder=" Confirmar Contraseña"
                 secureTextEntry
@@ -81,7 +80,7 @@ export default function RegisterScreen({ navigation }) {
             />
 
             <Button title=" Registrarse" onPress={handleRegister} />
-            <Texto style={ styles.link} onPress={() => navigation.navigate('Login')} >¿Ya tienes cuenta? Inicia Sesion</Texto>
+            <Texto style={ styles.link} onPress={() => navigation.replace('Login')} >¿Ya tienes cuenta? Inicia Sesion</Texto>
         </View>
     )
 }

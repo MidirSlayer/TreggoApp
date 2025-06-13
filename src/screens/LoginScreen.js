@@ -37,6 +37,7 @@ export default function LoginScreen({ navigation }) {
                 <Image source={require('../../assets/Treggo.png')} style={{width: 500, height: 150, marginTop: -200}}/>
             </View>
             <Texto type="title">Iniciar Sesión</Texto>
+            <Texto type="body">Correo Electronico</Texto>
             <Input
                 
                 placeholder="Email"
@@ -44,6 +45,7 @@ export default function LoginScreen({ navigation }) {
                 onChangeText={setEmail}
                 keyboardType="email-address"
                 value={email} />
+            <Texto type="body">Contraseña</Texto>
             <Input
                 
                 placeholder="contraseña"
@@ -55,7 +57,7 @@ export default function LoginScreen({ navigation }) {
 
             <Button title="Entrar"  onPress={handleLogin}/>
 
-            <Texto style={styles.link} onPress={() =>navigation.navigate('Register')}>¿No tienes cuenta? Registrate.</Texto>
+            <Texto style={styles.link} onPress={() =>navigation.replace('Register')}>¿No tienes cuenta? Registrate.</Texto>
         </View>
     )
 }
