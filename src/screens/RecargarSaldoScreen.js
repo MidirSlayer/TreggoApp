@@ -5,6 +5,7 @@ import Button from "../components/Button";
 import { spacing } from "../theme";
 import { getSession } from "../services/session";
 import { supabaseAnonKey, supabaseUrl } from "../services/supabase";
+import { asegurarCredito } from "../services/AsegurarCredito";
 
 export default function RecargarSaldoScreen ({navigation}) {
     const [saldo, setSaldo] = useState(null);
@@ -17,6 +18,7 @@ export default function RecargarSaldoScreen ({navigation}) {
             if (!session) return;
 
             setUserId(session.user.id);
+            await asegurarCredito();
 
             const res = await fetch(`${supabaseUrl}/rest/v1/creditos?user_id=eq.${session.user.id}`, {
                 headers: {
