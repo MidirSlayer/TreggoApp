@@ -8,11 +8,12 @@ import Input from "../components/Input";
 import Button from "../components/Button";
 import Texto from "../components/Text";
 import { colors } from "../theme";
+import Select from "../components/Select";
 
 
 
 export default function PostJobScreen () {
-    const [tipo, setTipos] = useState([]);
+    const [tipo, setTipos] = useState('');
     const [titulo, setTitulo] = useState('');
     const [descripcion, setDescripcion] = useState('')
     const [jobTypes, setJobTypes] = useState([])
@@ -34,6 +35,11 @@ export default function PostJobScreen () {
         if (!titulo || !descripcion) {
             Alert.alert('Campos requeridos', 'Completa los campos');
             console.log('Campos', {titulo, tipo, descripcion})
+            return;
+        }
+
+        if (!tipo) {
+            Alert.alert('Selecciona una categoria')
             return;
         }
 
@@ -71,7 +77,7 @@ export default function PostJobScreen () {
 
             setTitulo('')
             setDescripcion('')
-            setTipos(tipo[0])
+            setTipos('')
         } catch (error) {
             console.log('Error al publicar', error.message);
             Alert.alert('Error', error.message);
@@ -81,15 +87,13 @@ export default function PostJobScreen () {
     return (
         <View style={styles.container}>
             <Texto type="subtitle">Tipo de trabajo:</Texto>
-            <Picker 
+            <Select 
                 selectedValue={jobTypes}
                 onValueChange={setTipos}
+                options={jobTypes}
+                placeholder="Seleccione una categoria"
                 style={{color: colors.text}}
-            >
-                {jobTypes.map((jobType) => (
-                    <Picker.Item key={jobType} label={jobType} value={jobType} />
-                ))}
-            </Picker>
+            />
 
             <Texto type="subtitle">Titulo:</Texto>
             <Input
