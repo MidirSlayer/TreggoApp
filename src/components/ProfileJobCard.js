@@ -13,14 +13,6 @@ export default function ProfileJobCard({ trabajo, onPress }) {
   return (
     <Card>
       <View style={styles.header}>
-        <Image
-          source={{
-            uri:
-              trabajo.avatar_url ||
-              'https://ui-avatars.com/api/?name=User&background=ccc&color=fff&size=128',
-          }}
-          style={styles.avatar}
-        />
         <View style={styles.tituloArea}>
           <Texto type="title">{trabajo.titulo}</Texto>
           <Texto type="muted">{fecha}</Texto>
