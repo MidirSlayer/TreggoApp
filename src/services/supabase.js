@@ -133,3 +133,18 @@ export async function obtenerMisTrabajos(user_id) {
   if (!res.ok) throw new Error('Error al obtener tus trabajos')
     return data;
 }
+
+export async function eliminarTrabajo(id) {
+  const res = await fetch(`${supabaseUrl}/rest/v1/trabajos?id=eq.${id}`, {
+    method: 'DELETE',
+    headers: {
+      apikey: supabaseAnonKey,
+      'Content-Type': 'application/json',
+      Prefer: 'return=representation'  
+     }
+  });
+
+  const data = await res.json();
+  if (!res) throw new Error(data.message || 'Error al eliminar trabajo');
+  return data;
+}

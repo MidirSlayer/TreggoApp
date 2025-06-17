@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import { View, FlatList, StyleSheet} from "react-native";
+import { View, FlatList, StyleSheet, Alert} from "react-native";
 import { getSession } from "../services/session";
-import { obtenerMisTrabajos } from "../services/supabase";
-import TrabajoCard from "../components/TrabajoCard";
+import { obtenerMisTrabajos, eliminarTrabajo} from "../services/supabase";
+import ProfileJobCard from "../components/ProfileJobCard";
 import Texto from "../components/Text";
+
 
 export default function ProfileScreen({navigation}) {
     const [user,setUser] = useState(null)
@@ -26,6 +27,29 @@ export default function ProfileScreen({navigation}) {
     }, [])
     )
     
+    function confirmarEliminacion(id) {
+        Alert.alert(
+            '¿Eliminar Trabajo?',
+            'Esta accion no se puede deshacer.',
+            [
+                {text: 'Cancelar', style: 'cancel'},
+                {
+                    text: 'Eliminar',
+                    style: 'destructive',
+                    onPress: async () => {
+                        try {
+                            await eliminarTrabajo(id);
+                            const actualizados = await obtenerMisTrabajos(user.id);
+                            setTrabajos(actualizados)
+                        } catch (e) {
+                            Alert.alert('Error', 'No se pudo eliminar');
+                            console.log('❌ Error al eliminar', e)
+                        }
+                    } 
+                }
+            ]
+        )
+    }
 
     if (!user) return <Texto>Cargando...</Texto>
 
@@ -39,7 +63,7 @@ export default function ProfileScreen({navigation}) {
                 data={trabajos}
                 keyExtractor={(item => item.id)}
                 renderItem={({item}) => (
-                    <TrabajoCard trabajo={item} />
+                    <ProfileJobCard trabajo={item} onPress={() => confirmarEliminacion(item.id)} />
                 )}
                 ListEmptyComponent={<Texto type="muted">No hay publicaciones</Texto>}
             />
