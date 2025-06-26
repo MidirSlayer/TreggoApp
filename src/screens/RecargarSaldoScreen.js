@@ -6,11 +6,14 @@ import { spacing } from "../theme";
 import { getSession } from "../services/session";
 import { supabaseAnonKey, supabaseUrl } from "../services/supabase";
 import { asegurarCredito } from "../services/AsegurarCredito";
+import { CardField, useStripe } from "@stripe/stripe-react-native";
 
 export default function RecargarSaldoScreen ({navigation}) {
     const [saldo, setSaldo] = useState(null);
     const [cargando, setCargando] = useState(false);
     const [userId, setUserId] = useState(null);
+    const [cardDetail, setCardDetail] = useState();
+    const { confirmPayment } = useStripe();
 
     useEffect(() => {
         async function cargarSaldo() {
@@ -42,7 +45,27 @@ export default function RecargarSaldoScreen ({navigation}) {
     async function recargar(monto) {
         if (!userId) return console.log('nah');
         setCargando(true);
+        try {
+        
+        const resStripe = await fetch('http://192.168.0.4:3000/crear-payment-intent', {
+            method: 'POST', 
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ amount: 500})
+        });
 
+        const { clientSecret } = await resStripe.json();
+
+        const {paymentIntent, error} = await confirmPayment(clientSecret, {
+            paymentMethodType: 'Card', 
+            billingDetails: { email: 'test@example.com'}
+        });
+
+        if (error) {
+        console.log('Error confirmando pago', error);
+        Alert.alert('Pago fallido', error.message);
+        } else if (paymentIntent) {
+        Alert.alert('✅ Pago exitoso', `Estado: ${paymentIntent.status}`);
+        
         const res = await fetch(`${supabaseUrl}/rest/v1/creditos?user_id=eq.${userId}`, {
             method: 'PATCH', 
             headers: {
@@ -64,8 +87,13 @@ export default function RecargarSaldoScreen ({navigation}) {
         } else {
             Alert.alert('Error', 'No se pudo recargar.')
         }
+      }
 
-        setCargando(false);
+        } catch (e) {
+            console.log('Error', e)
+            Alert.alert('Error', 'Hubo un problema al procesar el pago')
+        } finally {setCargando(false)}
+
     }
 
     return(
@@ -74,11 +102,18 @@ export default function RecargarSaldoScreen ({navigation}) {
             <Texto style={styles.saldo}>${saldo?.toFixed(2) ?? '0.00'}</Texto>
 
             <Texto style={{ marginTop: spacing.lg}}>Recargar saldo:</Texto>
-            <View style={styles.botones}>
-                <Button title='+0.25' onPress={() => recargar(0.25)} disabled={cargando} />
-                <Button title='+1.00' onPress={() => recargar(1)} disabled={cargando} />
-                <Button title='+2.00' onPress={() => recargar(2)} disabled={cargando} />
-            </View>
+             <CardField
+        postalCodeEnabled={false}
+        placeholder={{ number: '4242 4242 4242 4242' }}
+        cardStyle={{
+          backgroundColor: '#FFFFFF',
+          textColor: '#000000',
+        }}
+        style={styles.card}
+        onCardChange={setCardDetail}
+      />
+
+      <Button title="Recargar $5" onPress={() => recargar(5.00)} disabled={cargando || !cardDetail?.complete} />
         </View>
     )
 }
@@ -96,4 +131,5 @@ const styles = StyleSheet.create({
     gap: spacing.md,
     marginTop: spacing.md,
   },
+    card: { height: 50, marginBottom: 20 },
 });
