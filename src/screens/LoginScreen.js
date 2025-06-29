@@ -5,8 +5,10 @@ import { saveSession } from "../services/session";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import Texto from "../components/Text";
+import useNetworkToast from "../hooks/useNetworkToast";
 
 export default function LoginScreen({ navigation }) {
+    useNetworkToast();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     

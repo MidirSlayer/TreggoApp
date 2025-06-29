@@ -9,9 +9,11 @@ import { colors, spacing, fonts, borderRadius } from '../theme';
 import Texto from '../components/Text';
 import Filtros from '../components/Filtros';
 import TrabajoCard from '../components/TrabajoCard';
+import useNetworkToast from '../hooks/useNetworkToast';
 
 
 export default function HomeScreen({navigation}) {
+    useNetworkToast();
     const [todosLosTrabajos, setTodosLosTrabajos] = useState([]);
     const [trabajos, setTrabajos] = useState([]);
     const [cargando, setCargando] = useState(true);
