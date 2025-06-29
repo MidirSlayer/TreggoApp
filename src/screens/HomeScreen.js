@@ -4,7 +4,7 @@ import { View, StyleSheet, FlatList, TouchableOpacity, SafeAreaView, ActivityInd
 import { clearSession, getSession } from '../services/session';
 import * as Location from 'expo-location'
 import { obtenerTrabajos, obtenerTiposTrabajo} from '../services/supabase';
-import { Ionicons } from '@expo/vector-icons'
+import { obtenerPerfil } from '../services/perfil';
 import { colors, spacing, fonts, borderRadius } from '../theme';
 import Texto from '../components/Text';
 import Filtros from '../components/Filtros';
@@ -19,6 +19,7 @@ export default function HomeScreen({navigation}) {
     const [tipos, setTipos] = useState([])
     const [tipoActivo, setTipoActivo] = useState(null);
     const [usuarioId, setUsuarioId] = useState(null);
+
 
     useEffect(() => {
         async function cargarTipos() {
@@ -51,15 +52,22 @@ export default function HomeScreen({navigation}) {
                 let trabajosFiltrados = trabajos.filter((t) => t.user_id !== miUserId);
                 if (tipoActivo) { trabajosFiltrados = trabajosFiltrados.filter((t) => t.tipo === tipoActivo)}
 
-                const trabajosConDistancia = trabajosFiltrados.map((t) => {
+              const trabajosConDistancia = await Promise.all(
+                trabajosFiltrados.map(async (t) => {
                     const distancia = calcularDistancia(
-                        loc.coords.latitude,
-                        loc.coords.longitude,
-                        t.lat,
-                        t.lon
+                    loc.coords.latitude,
+                    loc.coords.longitude,
+                    t.lat,
+                    t.lon
                     );
-                    return {...t, distancia };
-                });
+
+                    const perfil = await obtenerPerfil(t.user_id);
+                    const avatar_url = perfil?.avatar_url ?? null;
+
+                    return { ...t, distancia, avatar_url }; 
+                })
+                );
+
 
                 trabajosConDistancia.sort((a, b) => a.distancia - b.distancia);
                 setTodosLosTrabajos(trabajosConDistancia);
