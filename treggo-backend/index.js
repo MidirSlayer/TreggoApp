@@ -8,7 +8,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 app.use(cors());
 app.use(express.json());
 
-app.post('/crear-payment-intent', async (req, res) => {
+app.post('https://treggo2-0.onrender.com/crear-payment-intent/crear-payment-intent', async (req, res) => {
   try {
     const { amount } = req.body;
 
