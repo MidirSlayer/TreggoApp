@@ -1,34 +1,37 @@
-import { useEffect } from "react";
-import * as Network from 'expo-network'
-import Toast from "react-native-root-toast";
+// src/hooks/useNetworkToast.js
+import { useEffect } from 'react';
+import * as Network from 'expo-network';
+import Toast from 'react-native-toast-message';
 
-export default function useNetworkToast() {
-    useEffect(() => {
-        let interval;
+export function useNetworkToast() {
+  useEffect(() => {
+    const check = async () => {
+      const state = await Network.getNetworkStateAsync();
+      if (!state.isConnected) {
+        Toast.show({
+          type: 'error',
+          text1: 'Sin conexión a internet',
+          text2: 'Revisa tu conexión.',
+          position: 'top',
+        });
+      }
+    };
 
-        async function checkConnection() {
-            try {
-                const status = await Network.getNetworkStateAsync();
-                const isConnected = status.isConnected && status.isInternetReachable !== false;
+    check();
 
-                if (!isConnected) {
-                    Toast.show('❌ Sin conexión a internet', {
-                        duration: Toast.durations.SHORT,
-                        position: Toast.positions.BOTTOM,
-                        shadow: true, 
-                        animation: true,
-                        hideOnPress: true,
-                        backgroundColor: '#333'
-                    });
-                }
-            } catch (error) {
-                console.log('⚠️ Error al verificar red', error)
-            }
-        }
-        interval = setInterval(checkConnection, 5000);
+    const subscription = Network.addNetworkStateListener((state) => {
+      if (!state.isConnected) {
+        Toast.show({
+          type: 'error',
+          text1: 'Sin conexión a internet',
+          text2: 'Revisa tu conexión.',
+          position: 'top',
+        });
+      }
+    });
 
-        checkConnection();
-
-        return () => clearInterval(interval)
-    }, []);
+    return () => {
+      subscription && subscription.remove();
+    };
+  }, []);
 }
