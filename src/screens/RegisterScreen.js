@@ -4,6 +4,10 @@ import { singUp } from "../services/supabase";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import Texto from "../components/Text";
+import PerfilForm from "../components/PerfilForm";
+import {crearPerfil } from "../services/perfil";
+import { subirImagenRegistro } from "../services/storage";
+import Toast from "react-native-root-toast";
  
 export default function RegisterScreen({ navigation }) {
     const [ email, setEmail ] = useState('');
@@ -52,7 +56,35 @@ export default function RegisterScreen({ navigation }) {
                 <Image source={require('../../assets/Treggo.png')} style={{width: 500, height: 150, marginTop: -200}}/>
             </View>
 
-            <Texto style={styles.title}>Crear Cuenta</Texto>
+            { modeCreator ? (
+                <PerfilForm
+                onSubmit={async (datos) => {
+                
+                let urlFinal = datos.avatar_url
+
+                if (datos.avatar_url?.startsWith('file')) {
+                    urlFinal = await subirImagenRegistro(datos.avatar_url, id, access_token);          
+                }
+
+                const datosFinales = {...datos, avatar_url: urlFinal};
+
+                console.log('datos recibidos', datosFinales)
+
+                await crearPerfil(id, datosFinales);
+                Toast.show('Perfil Creado', {
+                    duration: Toast.durations.LONG,
+                    position: Toast.positions.BOTTOM,
+                    shadow: true, 
+                    animation: true,
+                    hideOnPress: true,
+                    backgroundColor: '#333'
+                });
+                navigation.replace('Login')
+                }}
+            />
+            ) : (
+                <View>
+                    <Texto style={styles.title}>Crear Cuenta</Texto>
             <Texto type="body">Correo Electronico</Texto>
             <Input
                 placeholder="Email"
@@ -81,6 +113,10 @@ export default function RegisterScreen({ navigation }) {
 
             <Button title=" Registrarse" onPress={handleRegister} />
             <Texto style={ styles.link} onPress={() => navigation.replace('Login')} >¿Ya tienes cuenta? Inicia Sesion</Texto>
+                </View>
+            )}
+
+            
         </View>
     )
 }
