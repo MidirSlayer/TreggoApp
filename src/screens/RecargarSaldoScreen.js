@@ -7,6 +7,7 @@ import { getSession } from "../services/session";
 import { supabaseAnonKey, supabaseUrl } from "../services/supabase";
 import { asegurarCredito } from "../services/AsegurarCredito";
 import { CardField, useStripe } from "@stripe/stripe-react-native";
+import Toast from "react-native-root-toast";
 
 export default function RecargarSaldoScreen ({navigation}) {
     const [saldo, setSaldo] = useState(null);
@@ -47,14 +48,20 @@ export default function RecargarSaldoScreen ({navigation}) {
         setCargando(true);
         try {
         
-        const resStripe = await fetch('http://192.168.0.4:3000/crear-payment-intent', {
+        const resStripe = await fetch('https://treggo2-0.onrender.com/crear-payment-intent', {
             method: 'POST', 
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({ amount: 500})
         });
 
-        const { clientSecret } = await resStripe.json();
+       const json = await resStripe.json();
+        console.log('🔐 Respuesta Stripe:', json);
 
+        const clientSecret = json.clientSecret;
+
+        if (!clientSecret) {
+            throw new Error('No se recibió clientSecret');
+        }
         const {paymentIntent, error} = await confirmPayment(clientSecret, {
             paymentMethodType: 'Card', 
             billingDetails: { email: 'test@example.com'}
@@ -64,7 +71,15 @@ export default function RecargarSaldoScreen ({navigation}) {
         console.log('Error confirmando pago', error);
         Alert.alert('Pago fallido', error.message);
         } else if (paymentIntent) {
-        Alert.alert('✅ Pago exitoso', `Estado: ${paymentIntent.status}`);
+        //Alert.alert('✅ Pago exitoso', `Estado: ${paymentIntent.status}`);
+         Toast.show('✅ Pago exitoso', `Estado: ${paymentIntent.status}`, {
+            duration: Toast.durations.SHORT,
+            position: Toast.positions.BOTTOM,
+            shadow: true, 
+            animation: true,
+            hideOnPress: true,
+            backgroundColor: '#333'
+        });
         
         const res = await fetch(`${supabaseUrl}/rest/v1/creditos?user_id=eq.${userId}`, {
             method: 'PATCH', 
@@ -98,6 +113,7 @@ export default function RecargarSaldoScreen ({navigation}) {
 
     return(
         <View style={styles.container}>
+            <Toast/>
             <Texto type="title">Saldo actual</Texto>
             <Texto style={styles.saldo}>${saldo?.toFixed(2) ?? '0.00'}</Texto>
 
