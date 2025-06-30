@@ -12,9 +12,14 @@ import { getSession } from "../services/session";
 export default function DetalleTrabajoScreen ({route, navigation}) {
     const { trabajo } = route.params;
     const [favorito, setFavorito] = useState(false);
+    const [proveedor, setProveedor] = useState(null);
+    const [yaContactado, setYaContactado] = useState(false);
+    
+    
 
     const fecha = new Date(trabajo.fecha).toLocaleDateString();
 
+   
     function marcarFav () {
       setFavorito(!favorito);
     }
@@ -32,7 +37,7 @@ export default function DetalleTrabajoScreen ({route, navigation}) {
 
     async function manejarContacto(trabajo) {
       const session = await getSession();
-      console.log(session)
+      
       const resultado = await contactarProveedor({
         proveedoId: trabajo.user_id,
         clienteId: session.user.id,
@@ -41,9 +46,18 @@ export default function DetalleTrabajoScreen ({route, navigation}) {
       })
 
       if (resultado.ok) {
-        Alert.alert('Exito', 'Puedes contactar al proveedor')
+        if(resultado.proveedor){
+          setProveedor(resultado.proveedor)
+        }
+        setYaContactado(true);
+        Alert.alert('Exito', 'Puedes contactar al proveedor');
+      } else if (resultado.mensaje === 'Ya has contactado a este proveedor.') {
+        if (resultado.proveedor) {
+          setProveedor(resultado.proveedor)
+        }
+      setYaContactado(true);
       } else {
-        Alert.alert('No disponible', resultado.mensaje);
+        Alert.alert('No disponible', resultado.mensaje?.toString());
       }
     }
 
@@ -52,7 +66,7 @@ export default function DetalleTrabajoScreen ({route, navigation}) {
             <View style={styles.header}>
                 <Avatar uri={trabajo.avatar_url ||
               'https://ui-avatars.com/api/?name=User&background=ccc&color=fff&size=128'}
-              />
+              /> 
               <View style={{flex: 1}}>
                 <Texto type="title">{trabajo.titulo}</Texto>
                 <Texto type="muted">{fecha}</Texto>
@@ -73,15 +87,19 @@ export default function DetalleTrabajoScreen ({route, navigation}) {
                 {trabajo.descripcion || 'Sin descripcion'}
             </Texto>
 
-            <Texto type="muted" >
-                Distancia estimada: {trabajo.distancia?.toFixed(2)} KM
-            </Texto>
-
-            <Button
+           {yaContactado || proveedor ? (
+              <View style={styles.contactoBox}>
+                <Texto type="subtitle">Información del proveedor:</Texto>
+                <Texto>📛 {proveedor?.nombre ?? 'Nombre no disponible'}</Texto>
+                <Texto>📍 {proveedor?.ciudad}</Texto>
+                <Texto>{trabajo.distancia?.toFixed(2)}KM</Texto>
+                <Texto>📞 {proveedor?.telefono}</Texto>
+              </View>
+            ):(<Button
                 title="contactar"
                 style={{marginTop: spacing.lg}}
                 onPress={() => manejarContacto(trabajo)}
-            />
+            />)}
 
             <TouchableOpacity onPress={reportar} style={styles.reportar}>
               <Ionicons name='flag-outline' size={18} color={colors.danger} />
