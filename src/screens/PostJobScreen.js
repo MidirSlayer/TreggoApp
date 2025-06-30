@@ -9,7 +9,7 @@ import Button from "../components/Button";
 import Texto from "../components/Text";
 import { colors } from "../theme";
 import Select from "../components/Select";
-
+import Toast from 'react-native-toast-message'
 
 
 export default function PostJobScreen () {
@@ -73,7 +73,15 @@ export default function PostJobScreen () {
             
             const creado = await publicarTrabajos(job);
             console.log('Servicio publicado', job);
-            Alert.alert('Exito', 'Tu servicio ha sido publicado')
+            //Alert.alert('Exito', 'Tu servicio ha sido publicado')
+            Toast.show({
+            type: 'success',
+            text1: '¡Publicación exitosa!',
+            text2: 'Tu servicio se ha publicado correctamente.',
+            position: 'top',
+            });
+
+        
 
             setTitulo('')
             setDescripcion('')
@@ -113,6 +121,7 @@ export default function PostJobScreen () {
             />
 
             <Button title="Publicar servicio" onPress={handleSubmit} />
+           
         </View>
     )
 }

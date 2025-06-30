@@ -4,6 +4,7 @@ import PerfilForm from '../components/PerfilForm';
 import { getSession } from '../services/session';
 import { obtenerPerfil, actualizarPerfil, crearPerfil } from '../services/perfil';
 import { subirImagenPerfil } from "../services/storage";
+import Toast from "react-native-toast-message";
 
 export default function PerfilEditorScreen ({navigation}) {
     const [perfil, setPerfil] = useState([]);
@@ -43,12 +44,21 @@ export default function PerfilEditorScreen ({navigation}) {
 
                 if (yaTienePerfil) {
                     await actualizarPerfil(userId, datosFinales);
-                    Alert.alert('Perfil actializado')
+                    Toast.show({
+                    type: 'success',
+                    text1: 'Perfil Actualizado', 
+                    position: 'top',
+                    })
                     navigation.replace('Main')
 
                 } else {
                     await crearPerfil(userId, datosFinales);
-                    Alert.alert('perfil creado')
+                    Toast.show({
+                    type: 'success',
+                    text1: 'Perfil Creado', 
+                    position: 'top',
+                    })
+                navigation.replace('Main')
                 }
                 }}
             />

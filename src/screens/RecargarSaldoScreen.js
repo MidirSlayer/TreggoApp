@@ -7,7 +7,7 @@ import { getSession } from "../services/session";
 import { supabaseAnonKey, supabaseUrl } from "../services/supabase";
 import { asegurarCredito } from "../services/AsegurarCredito";
 import { CardField, useStripe } from "@stripe/stripe-react-native";
-import Toast from "react-native-root-toast";
+
 
 export default function RecargarSaldoScreen ({navigation}) {
     const [saldo, setSaldo] = useState(null);
@@ -72,13 +72,11 @@ export default function RecargarSaldoScreen ({navigation}) {
         Alert.alert('Pago fallido', error.message);
         } else if (paymentIntent) {
         //Alert.alert('✅ Pago exitoso', `Estado: ${paymentIntent.status}`);
-         Toast.show('✅ Pago exitoso', `Estado: ${paymentIntent.status}`, {
-            duration: Toast.durations.SHORT,
-            position: Toast.positions.BOTTOM,
-            shadow: true, 
-            animation: true,
-            hideOnPress: true,
-            backgroundColor: '#333'
+         Toast.show({
+          type: 'success',
+          text1: '✅ Pago exitoso',
+          text2:  `Estado: ${paymentIntent.status}`,
+          position: 'top',
         });
         
         const res = await fetch(`${supabaseUrl}/rest/v1/creditos?user_id=eq.${userId}`, {
@@ -113,7 +111,7 @@ export default function RecargarSaldoScreen ({navigation}) {
 
     return(
         <View style={styles.container}>
-            <Toast/>
+           
             <Texto type="title">Saldo actual</Texto>
             <Texto style={styles.saldo}>${saldo?.toFixed(2) ?? '0.00'}</Texto>
 

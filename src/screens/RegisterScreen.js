@@ -7,7 +7,7 @@ import Texto from "../components/Text";
 import PerfilForm from "../components/PerfilForm";
 import {crearPerfil } from "../services/perfil";
 import { subirImagenRegistro } from "../services/storage";
-import Toast from "react-native-root-toast";
+import Toast from "react-native-toast-message";
  
 export default function RegisterScreen({ navigation }) {
     const [ email, setEmail ] = useState('');
@@ -71,13 +71,10 @@ export default function RegisterScreen({ navigation }) {
                 console.log('datos recibidos', datosFinales)
 
                 await crearPerfil(id, datosFinales);
-                Toast.show('Perfil Creado', {
-                    duration: Toast.durations.LONG,
-                    position: Toast.positions.BOTTOM,
-                    shadow: true, 
-                    animation: true,
-                    hideOnPress: true,
-                    backgroundColor: '#333'
+                Toast.show({
+                    type: 'success',
+                    text1: 'Perfil creado',
+                    position: 'top',
                 });
                 navigation.replace('Login')
                 }}
