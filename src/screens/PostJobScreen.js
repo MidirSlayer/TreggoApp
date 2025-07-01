@@ -96,7 +96,7 @@ export default function PostJobScreen () {
         <View style={styles.container}>
             <Texto type="subtitle">Tipo de trabajo:</Texto>
             <Select 
-                selectedValue={jobTypes}
+                selectedValue={tipo}
                 onValueChange={setTipos}
                 options={jobTypes}
                 placeholder="Seleccione una categoria"
