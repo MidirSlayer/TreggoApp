@@ -2,11 +2,13 @@ import React, {useState, useEffect} from "react";
 import { View, StyleSheet, Alert } from "react-native";
 import Texto from "../components/Text";
 import Button from "../components/Button";
+import Input from "../components/Input";
 import { spacing } from "../theme";
 import { getSession } from "../services/session";
 import { supabaseAnonKey, supabaseUrl } from "../services/supabase";
 import { asegurarCredito } from "../services/AsegurarCredito";
 import { CardField, useStripe } from "@stripe/stripe-react-native";
+import Toast from "react-native-toast-message";
 
 
 export default function RecargarSaldoScreen ({navigation}) {
@@ -15,6 +17,7 @@ export default function RecargarSaldoScreen ({navigation}) {
     const [userId, setUserId] = useState(null);
     const [cardDetail, setCardDetail] = useState();
     const { confirmPayment } = useStripe();
+    const [monto, setMonto] = useState(0);
 
     useEffect(() => {
         async function cargarSaldo() {
@@ -44,14 +47,24 @@ export default function RecargarSaldoScreen ({navigation}) {
     }, []);
 
     async function recargar(monto) {
+
+        if (monto < 0.25) {
+            Alert.alert('Por favor ingrese un monto superior 0.25')
+            return
+        }
+
+        const montoConvert = monto * 100;
+
         if (!userId) return console.log('nah');
         setCargando(true);
+
+
         try {
         
         const resStripe = await fetch('https://treggo2-0.onrender.com/crear-payment-intent', {
             method: 'POST', 
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ amount: 500})
+            body: JSON.stringify({ amount: montoConvert})
         });
 
        const json = await resStripe.json();
@@ -75,10 +88,12 @@ export default function RecargarSaldoScreen ({navigation}) {
          Toast.show({
           type: 'success',
           text1: '✅ Pago exitoso',
-          text2:  `Estado: ${paymentIntent.status}`,
+          text2:  `Se han añadido $${monto} a tu saldo`,
           position: 'top',
         });
         
+        const montoFixed = monto * 1.00
+        console.log(saldo, montoFixed)
         const res = await fetch(`${supabaseUrl}/rest/v1/creditos?user_id=eq.${userId}`, {
             method: 'PATCH', 
             headers: {
@@ -88,15 +103,16 @@ export default function RecargarSaldoScreen ({navigation}) {
                 Prefer: 'return=representation'
             },
             body: JSON.stringify({
-                saldo: saldo + monto,
+                saldo: saldo + montoFixed
             })
         });
 
         const data = await res.json();
+        console.log (data)
 
         if(res.ok) {
             setSaldo(data[0].saldo);
-            Alert.alert('Exito', `Se han añadido $${monto.toFixed(2)} a tu saldo`)
+            //Alert.alert('Exito', `Se han añadido $${monto} a tu saldo`)
         } else {
             Alert.alert('Error', 'No se pudo recargar.')
         }
@@ -116,6 +132,14 @@ export default function RecargarSaldoScreen ({navigation}) {
             <Texto style={styles.saldo}>${saldo?.toFixed(2) ?? '0.00'}</Texto>
 
             <Texto style={{ marginTop: spacing.lg}}>Recargar saldo:</Texto>
+            <Texto type="subtitle">Monto:</Texto>
+            <Input
+                placeholder="Monto"
+                autoCapitalize="none"
+                keyboardType="number-pad"
+                onChangeText={setMonto}
+                value={monto}
+            />
              <CardField
         postalCodeEnabled={false}
         placeholder={{ number: '4242 4242 4242 4242' }}
@@ -127,7 +151,7 @@ export default function RecargarSaldoScreen ({navigation}) {
         onCardChange={setCardDetail}
       />
 
-      <Button title="Recargar $5" onPress={() => recargar(5.00)} disabled={cargando || !cardDetail?.complete} />
+      <Button title="Recargar" onPress={() => recargar(monto)} disabled={cargando || !cardDetail?.complete} />
         </View>
     )
 }
