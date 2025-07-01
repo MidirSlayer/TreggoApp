@@ -121,7 +121,7 @@ export default function PostJobScreen () {
             />
 
             <Button title="Publicar servicio" onPress={handleSubmit} />
-           
+
         </View>
     )
 }
