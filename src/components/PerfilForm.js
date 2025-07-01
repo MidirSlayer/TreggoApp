@@ -40,11 +40,11 @@ export default function PerfilForm({ initialData = {}, onSubmit}) {
                    <Avatar uri={avatar} />
             </TouchableOpacity>
             <Texto type="subtitle"> Nombre</Texto>
-            <Input placeholder="Nombre" value={nombre} onChangeText={setNombre} style={{marginVertical: 8}} />
+            <Input placeholder="Nombre" value={nombre} onChangeText={setNombre} style={{marginVertical: 8}} maxLength={60}/>
             <Texto type="subtitle"> Numero de telefono</Texto>
-            <Input placeholder="Telefono" value={telefono} onChangeText={setTelefono} style={{marginVertical: 8}} />
+            <Input placeholder="Telefono" value={telefono} keyboardType='phone-pad' maxLength={8} onChangeText={setTelefono} style={{marginVertical: 8}} />
             <Texto type="subtitle"> Ciudad</Texto>
-            <Input placeholder="Ciudad" value={ciudad} onChangeText={setCiudad} style={{marginVertical: 8}}/>
+            <Input placeholder="Ciudad" value={ciudad} onChangeText={setCiudad} style={{marginVertical: 8}} maxLength={50}/>
             <Button title="Guardar" onPress={guardar}/>
         </View>
     );
