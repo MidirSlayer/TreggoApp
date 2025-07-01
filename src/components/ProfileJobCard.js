@@ -21,9 +21,6 @@ export default function ProfileJobCard({ trabajo, onPress }) {
 
       <View style={styles.row}>
         <Tag label={trabajo.tipo} />
-        <Texto type="muted">
-          Distancia: {trabajo.distancia?.toFixed(2)} km
-        </Texto>
       </View>
 
       <Button
