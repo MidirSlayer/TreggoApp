@@ -39,6 +39,7 @@ export async function obtenerPerfil(userId) {
   });
 
   const data = await res.json();
+  //console.log(data)
   if (!res.ok) throw new Error(data.message || 'Error al obtener perfil');
   return data[0] || null;
 }
