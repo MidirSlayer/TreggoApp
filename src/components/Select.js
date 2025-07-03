@@ -3,7 +3,9 @@ import { View, StyleSheet } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { colors, spacing, borderRadius, fonts } from '../theme';
 
-export default function Select({ selectedValue, onValueChange, options = [], placeholder = null, style }) {
+export default function Select({ selectedValue, onValueChange, options = [], placeholder = null, style,
+  labelKey = 'label', valueKey = 'value'
+ }) {
   return (
     <View style={[styles.container, style]}>
       <Picker
@@ -15,14 +17,18 @@ export default function Select({ selectedValue, onValueChange, options = [], pla
         {placeholder && (
           <Picker.Item
             label={placeholder}
-            value=""
+            value={null}
             enabled={false}
             color='#999'
           />
         )}
 
         {options.map((opt) => (
-          <Picker.Item key={opt} label={opt} value={opt} />
+           <Picker.Item 
+            key={opt[valueKey]?.id || opt[valueKey] || opt.value || opt} 
+            label={opt[labelKey] || opt.label || opt} 
+            value={opt[valueKey] || opt.value || opt} 
+          />
         ))}
       </Picker>
     </View>
