@@ -1,9 +1,10 @@
 import React, {useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import Select from "./Select";
+import Texto from "./Text";
 import { obtenerTiposTrabajo, ObtenerSubtipos } from "../services/supabase";
 
-export default function SelectCategoria({onChange}) {
+export default function SelectCategoriaPostjob({onChange}) {
     const [categorias, setCategorias] = useState([])
     const [subcategorias,setSubcategorias] = useState([]);
     const [categoriaActiva, setCategoriaActiva] = useState('');
@@ -13,7 +14,7 @@ export default function SelectCategoria({onChange}) {
         async function cargarCategorias() {
             const data = await obtenerTiposTrabajo();
             setCategorias(data);
-            console.log('categooria',data)
+            console.log('categorias',data)
         }
         cargarCategorias();
     },[]);
@@ -45,24 +46,24 @@ export default function SelectCategoria({onChange}) {
 
     return (
         <View style={styles.contenedor}>
+            <Texto type="subtitle">Seleccione una categoria</Texto>
             <Select
                 placeholder="Categorias"
                 options={categorias.map(c => ({label: c.nombre, value: c}))}
                 selectedValue={categoriaActiva}
                 onValueChange={setCategoriaActiva}
             />
-            {subcategorias.length > 0 && (
+            <Texto type="subtitle" >Seleccione una subcategoria</Texto>
                 <Select
                     placeholder="Subcategoria"
                     selectedValue={subcategoriaActiva}
                     options={subcategorias.map(s => ({label: s.nombre, value: s}))}
                     onValueChange={setSubcategoriaActiva}
-                />
-            )}
+            />
+            
         </View>
     )
 }
-
 
 const styles = StyleSheet.create({
   contenedor: {
