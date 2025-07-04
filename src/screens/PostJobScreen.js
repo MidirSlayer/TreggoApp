@@ -8,12 +8,13 @@ import Input from "../components/Input";
 import Button from "../components/Button";
 import Texto from "../components/Text";
 import { colors } from "../theme";
-import Select from "../components/Select";
+import SelectCategoriaPostjob from "../components/SelectCategoriaPostJob";
 import Toast from 'react-native-toast-message'
 
 
 export default function PostJobScreen () {
     const [tipo, setTipos] = useState('');
+    const [subtipo, setSubtipo] = useState('');
     const [titulo, setTitulo] = useState('');
     const [descripcion, setDescripcion] = useState('')
     const [jobTypes, setJobTypes] = useState([])
@@ -67,7 +68,8 @@ export default function PostJobScreen () {
             lat: loc.coords.latitude,
             lon: loc.coords.longitude,
             fecha: new Date().toISOString(),
-            user_id
+            user_id, 
+            subtipo
             };
 
             
@@ -86,6 +88,7 @@ export default function PostJobScreen () {
             setTitulo('')
             setDescripcion('')
             setTipos('')
+            setSubtipo('')
         } catch (error) {
             console.log('Error al publicar', error.message);
             Alert.alert('Error', error.message);
@@ -94,15 +97,13 @@ export default function PostJobScreen () {
 
     return (
         <View style={styles.container}>
-            <Texto type="subtitle">Tipo de trabajo:</Texto>
-            <Select 
-                selectedValue={tipo}
-                onValueChange={setTipos}
-                options={jobTypes}
-                placeholder="Seleccione una categoria"
-                style={{color: colors.text}}
+            <SelectCategoriaPostjob
+                onChange={({categoria, subcategoria}) => {
+               
+                setTipos(categoria?.nombre);
+                setSubtipo(subcategoria?.nombre)
+            }}
             />
-
             <Texto type="subtitle">Titulo:</Texto>
             <Input
                 value={titulo}
