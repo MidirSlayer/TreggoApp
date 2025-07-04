@@ -124,14 +124,18 @@ export async function obtenerTiposTrabajo() {
 }
 
 export async function ObtenerSubtipos(categoria) {
-  const res = await fetch(`${supabaseUrl}/rest/v1/subcategoria?categoria=eq.${categoria}`, {
+  const id = categoria?.id
+  const res = await fetch(`${supabaseUrl}/rest/v1/subtipos_trabajo?tipo_id=eq.${id}`, {
     headers: {
       apikey: supabaseAnonKey,
     },
   });
 
+  console.log('categoria enviada', id)
+
   const data = await res.json();
   if (!res.ok) throw new Error('Error al obtener subcategorias')
+    console.log('informacion retornada',data)
     return data
 }
 
