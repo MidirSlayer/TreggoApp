@@ -10,6 +10,7 @@ import Texto from '../components/Text';
 import Filtros from '../components/Filtros';
 import TrabajoCard from '../components/TrabajoCard';
 import {useNetworkToast} from '../hooks/useNetworkToast';
+import SelectCategoria from '../components/SelectCategoria';
 
 
 export default function HomeScreen({navigation}) {
@@ -18,21 +19,11 @@ export default function HomeScreen({navigation}) {
     const [trabajos, setTrabajos] = useState([]);
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(null);
-    const [tipos, setTipos] = useState([])
     const [tipoActivo, setTipoActivo] = useState(null);
+    const [subtipoActivo, setSubtipoActivo] = useState(null)
     const [usuarioId, setUsuarioId] = useState(null);
 
-
     useEffect(() => {
-        async function cargarTipos() {
-            try {
-                const data = await obtenerTiposTrabajo();
-                setTipos(data.map((t) => t.nombre));
-            } catch (e){
-                console.error('Error al consegir tipos', e);
-            }
-        }
-
         async function cargarTrabajos() {
             try {
                 const { status } = await Location.requestForegroundPermissionsAsync();
@@ -45,14 +36,14 @@ export default function HomeScreen({navigation}) {
                 const miUserId = session?.user?.id;
                 setUsuarioId(miUserId);
 
-               setTipoActivo('Todos')
+               
 
                 const  loc = await Location.getCurrentPositionAsync({});
                 const trabajos = await obtenerTrabajos();
                 console.log('Trabajos obtenidos:', trabajos);
 
                 let trabajosFiltrados = trabajos.filter((t) => t.user_id !== miUserId);
-                if (tipoActivo) { trabajosFiltrados = trabajosFiltrados.filter((t) => t.tipo === tipoActivo)}
+               // if (tipoActivo) { trabajosFiltrados = trabajosFiltrados.filter((t) => t.tipo === tipoActivo)}
 
               const trabajosConDistancia = await Promise.all(
                 trabajosFiltrados.map(async (t) => {
@@ -83,20 +74,28 @@ export default function HomeScreen({navigation}) {
             }
         }
 
-        cargarTrabajos();
-        cargarTipos();
+        cargarTrabajos(); 
     }, []);
 
         useEffect(() => {
+
+        console.log('Tipo activo (nombre):', tipoActivo?.nombre);
+        console.log('Subtipo activo (nombre):', subtipoActivo?.nombre);
+        console.log('Tipos únicos en trabajos:', [...new Set(todosLosTrabajos.map(t => t.tipo))]);
         if (!todosLosTrabajos || todosLosTrabajos.length === 0) return;
 
-        if (tipoActivo === 'Todos') {
-            setTrabajos(todosLosTrabajos);
-        } else {
-            const filtrados = todosLosTrabajos.filter((t) => tipoActivo === 'Todos' ? true : t.tipo === tipoActivo);
-            setTrabajos(filtrados);
+            let filtrados = [...todosLosTrabajos]
+
+        if (tipoActivo?.nombre)  {
+             filtrados = filtrados.filter(t => t.tipo.toLowerCase() === tipoActivo.nombre.toLowerCase());
+             console.log( 'filtrados',tipoActivo.nombre)
         }
-        }, [tipoActivo, todosLosTrabajos]);
+
+        if (subtipoActivo?.nombre) {
+            filtrados= filtrados.filter(t => t.subtipo?.toLowerCase() === subtipoActivo.nombre.toLowerCase())
+        }
+        setTrabajos(filtrados)
+        }, [tipoActivo, subtipoActivo, todosLosTrabajos]);
 
     
      if (cargando) return <ActivityIndicator style={{flex: 1}} />
@@ -104,10 +103,12 @@ export default function HomeScreen({navigation}) {
     
     return(
         <>
-        <Filtros
-            tipos={tipos}
-            activo={tipoActivo}
-            onSelect={(tipo) => setTipoActivo(tipo)}
+        <SelectCategoria
+            onChange={({categoria, subcategoria}) => {
+                //console.log('categoria', categoria, 'sub', subcategoria)
+                setTipoActivo(categoria);
+                setSubtipoActivo(subcategoria || null)
+            }}
         />
 
         <FlatList
