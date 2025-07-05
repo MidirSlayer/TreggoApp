@@ -18,6 +18,7 @@ export default function PostJobScreen () {
     const [titulo, setTitulo] = useState('');
     const [descripcion, setDescripcion] = useState('')
     const [jobTypes, setJobTypes] = useState([])
+    const [resetKey, setResetKey] = useState(0)
 
     useEffect(() => {
   async function cargarTipos() {
@@ -31,6 +32,7 @@ export default function PostJobScreen () {
 
   cargarTipos();
 }, []);
+
 
     const handleSubmit = async() => {
         if (!titulo || !descripcion) {
@@ -89,6 +91,7 @@ export default function PostJobScreen () {
             setDescripcion('')
             setTipos('')
             setSubtipo('')
+            setResetKey(prev => prev + 1);
         } catch (error) {
             console.log('Error al publicar', error.message);
             Alert.alert('Error', error.message);
@@ -98,6 +101,7 @@ export default function PostJobScreen () {
     return (
         <View style={styles.container}>
             <SelectCategoriaPostjob
+              key={`select_${resetKey}`}
                 onChange={({categoria, subcategoria}) => {
                
                 setTipos(categoria?.nombre);
