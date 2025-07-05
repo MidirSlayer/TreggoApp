@@ -44,28 +44,48 @@ export default function SelectCategoria({onChange}) {
 
 
     return (
-        <View style={styles.contenedor}>
+        <View style={styles.rowContainer}>
+            <View style={styles.selectWrapper}>
             <Select
+                style={styles.select}
                 placeholder="Categorias"
                 options={categorias.map(c => ({label: c.nombre, value: c}))}
                 selectedValue={categoriaActiva}
                 onValueChange={setCategoriaActiva}
             />
+            </View>
+            <View style={styles.selectContainer}>
             {subcategorias.length > 0 && (
                 <Select
+                    style={styles.select}
                     placeholder="Subcategoria"
                     selectedValue={subcategoriaActiva}
                     options={subcategorias.map(s => ({label: s.nombre, value: s}))}
                     onValueChange={setSubcategoriaActiva}
                 />
             )}
+            </View>
         </View>
     )
 }
 
-
 const styles = StyleSheet.create({
-  contenedor: {
-    marginBottom: 16,
-  },
+    rowContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: -8,
+        marginTop: 5
+    },
+    selectWrapper: {
+        flex: 1,
+        marginRight: 8,
+    },
+    select: {
+        backgroundColor: 'white',
+        borderWidth: 1,
+        borderColor: '#e0e0e0',
+        paddingHorizontal: 8,
+        fontSize: 14,
+        width: 200
+    },
 });
