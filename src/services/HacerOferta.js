@@ -1,7 +1,7 @@
 import { supabaseAnonKey, supabaseUrl } from "./supabase";
 import { getSession } from "./session";
 
-export async function contactarProveedor({ proveedoId, clienteId, trabajoId, comision = 0.25 }) {
+export async function enviarOferta({ proveedor_id, trabajo_id, precio, descripcion,tiempo_estimado}) {
   const session = await getSession();
 
   if (!session) {
@@ -9,18 +9,20 @@ export async function contactarProveedor({ proveedoId, clienteId, trabajoId, com
   }
 
   try {
-    const res = await fetch(`${supabaseUrl}/rest/v1/rpc/contactar_proveedor`, {
+    const res = await fetch(`${supabaseUrl}/rest/v1/ofertas`, {
       method: 'POST',
       headers: {
         apikey: supabaseAnonKey,
         Authorization: `Bearer ${session.token}`,
         'Content-Type': 'application/json',
+        'Prefer': 'return=representation'
       },
       body: JSON.stringify({
-        proveedor: proveedoId,
-        cliente: clienteId,
-        trabajo: trabajoId.toString(),
-        comision: comision,
+        proveedor_id: proveedor_id,
+        trabajo_id: trabajo_id,
+        precio,
+        tiempo_estimado,
+        descripcion,
       }),
     });
 
