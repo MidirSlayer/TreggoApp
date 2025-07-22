@@ -3,7 +3,7 @@ import { View, StyleSheet, Alert } from "react-native";
 import Texto from "../components/Text";
 import Button from "../components/Button";
 import Input from "../components/Input";
-import { spacing } from "../theme";
+import { colors, spacing } from "../theme";
 import { getSession } from "../services/session";
 import { supabaseAnonKey, supabaseUrl } from "../services/supabase";
 import { asegurarCredito } from "../services/AsegurarCredito";
@@ -146,6 +146,7 @@ export default function RecargarSaldoScreen ({navigation}) {
         cardStyle={{
           backgroundColor: '#FFFFFF',
           textColor: '#000000',
+          placeholderColor: colors.subtext
         }}
         style={styles.card}
         onCardChange={setCardDetail}
