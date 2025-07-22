@@ -2,24 +2,23 @@ import React, { useState } from "react";
 import { View, StyleSheet, ScrollView, TouchableOpacity, Alert} from "react-native";
 import Texto from "../components/Text";
 import Tag from "../components/Tag";
+import Input from "../components/Input";
 import Button from "../components/Button";
 import Avatar from "../components/Avatar";
 import { spacing, colors, borderRadius } from "../theme";
 import { Ionicons } from '@expo/vector-icons' 
-import { contactarProveedor } from "../services/contactarProveedor";
 import { getSession } from "../services/session";
+import { enviarOferta } from "../services/HacerOferta";
+import Toast from "react-native-toast-message";
+
 
 export default function DetalleTrabajoScreen ({route, navigation}) {
     const { trabajo } = route.params;
     const [favorito, setFavorito] = useState(false);
-    const [proveedor, setProveedor] = useState(null);
-    const [yaContactado, setYaContactado] = useState(false);
-    
-    
+    const [precio, setPrecio] = useState('');
+    const [tiempoEstimado, setTiempoEstimado] = useState('');
+    const [descripcion, setDescripcion] = useState('');
 
-    const fecha = new Date(trabajo.fecha).toLocaleDateString();
-
-   
     function marcarFav () {
       setFavorito(!favorito);
     }
@@ -37,28 +36,26 @@ export default function DetalleTrabajoScreen ({route, navigation}) {
 
     async function manejarContacto(trabajo) {
       const session = await getSession();
-      
-      const resultado = await contactarProveedor({
-        proveedoId: trabajo.user_id,
-        clienteId: session.user.id,
-        trabajoId: trabajo.id,
-        comision: 0.25
-      })
 
-      if (resultado.ok) {
-        if(resultado.proveedor){
-          setProveedor(resultado.proveedor)
-        }
-        setYaContactado(true);
-        Alert.alert('Exito', 'Puedes contactar al proveedor');
-      } else if (resultado.mensaje === 'Ya has contactado a este proveedor.') {
-        if (resultado.proveedor) {
-          setProveedor(resultado.proveedor)
-        }
-      setYaContactado(true);
-      } else {
-        Alert.alert('No disponible', resultado.mensaje?.toString());
+      if (!descripcion || !precio || !tiempoEstimado){
+        Toast.show({
+          type: 'info',
+          text1: 'Campos deben estar llenos'
+        })
+        return;
       }
+      
+      const ofert = enviarOferta({
+        trabajo_id: trabajo.id,
+        proveedor_id: trabajo.user_id,
+        precio: parseFloat(precio),
+        tiempo_estimado: tiempoEstimado || null,
+        descripcion: descripcion || null
+      })
+      
+
+      console.log('Respuesta',ofert)
+      
     }
 
     return (
@@ -69,7 +66,7 @@ export default function DetalleTrabajoScreen ({route, navigation}) {
               /> 
               <View style={{flex: 1}}>
                 <Texto type="title">{trabajo.titulo}</Texto>
-                <Texto type="muted">{fecha}</Texto>
+                
               </View>
 
               <TouchableOpacity onPress={marcarFav}>
@@ -87,19 +84,27 @@ export default function DetalleTrabajoScreen ({route, navigation}) {
                 {trabajo.descripcion || 'Sin descripcion'}
             </Texto>
 
-           {yaContactado || proveedor ? (
-              <View style={styles.contactoBox}>
-                <Texto type="subtitle">Información del proveedor:</Texto>
-                <Texto>📛 {proveedor?.nombre ?? 'Nombre no disponible'}</Texto>
-                <Texto>📍 {proveedor?.ciudad}</Texto>
-                <Texto>{trabajo.distancia?.toFixed(2)}KM</Texto>
-                <Texto>📞 {proveedor?.telefono}</Texto>
-              </View>
-            ):(<Button
-                title="contactar"
-                style={{marginTop: spacing.lg}}
-                onPress={() => manejarContacto(trabajo)}
-            />)}
+            <View >
+              <Texto type="subtitle">Descripcion</Texto>
+              <Input
+                value={descripcion}
+                onChangeText={setDescripcion}
+                placeholder="Descripcion de tu oferta"
+            />
+            <Texto type="subtitle">Precio</Texto>
+            <Input
+                value={precio}
+                onChangeText={setPrecio}
+                placeholder="precio de tus servicios en dolares"
+            />
+            <Texto type="subtitle">Tiempo estimado</Texto>
+            <Input
+                value={tiempoEstimado}
+                onChangeText={setTiempoEstimado}
+                placeholder="Tiempo que tardaras en completar el trabajo"
+            />
+              <Button title='Hacer oferta' onPress={() => manejarContacto(trabajo)} />
+            </View>
 
             <TouchableOpacity onPress={reportar} style={styles.reportar}>
               <Ionicons name='flag-outline' size={18} color={colors.danger} />
