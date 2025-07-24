@@ -20,7 +20,7 @@ export default function DrawerNavigator () {
             }}
         >
             <Drawer.Screen
-                name="InicioApp"
+                name="Trabajos"
                 component={MainTabs}
                 options={{
                     drawerLabel: 'Inicio',

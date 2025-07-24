@@ -13,17 +13,9 @@ export default function AppStack() {
     return (
         <Stack.Navigator screenOptions={{headerShown: false}}>
         <Stack.Screen name="Main" component={DrawerNavigator} />
-        
-        <Stack.Screen
-            name="Login"
-            component={LoginScreen}
-            options={{title: 'Login'}}
-        />
-
+        <Stack.Screen name="Login" component={LoginScreen} options={{title: 'Login'}}/>
         <Stack.Screen name="Register" component={RegisterScreen} />
-
         <Stack.Screen name="DetalleTrabajo" component={DetalleTrabajoScreen} />
-
         <Stack.Screen name="RecargarSaldo" component={RecargarSaldoScreen} />
         </Stack.Navigator>
     );

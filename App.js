@@ -6,6 +6,7 @@ import { getSession } from "./src/services/session";
 import { StripeProvider } from "@stripe/stripe-react-native";
 import Toast from "react-native-toast-message";
 import { toastConfig } from "./src/themes/ToastTheme";
+import SplashScreen from "./src/screens/SplashScreen";
 
 export default function App() {
 
@@ -25,7 +26,13 @@ export default function App() {
     
     <StripeProvider publishableKey="pk_test_51RbVfj4gAfXcTJ82QkUVrvsOcxRWH1yMAnkpMQfGxr3lYTn2P6POZagqJAry2XFniyYc3pjLrfwWV2zJB7GwxRfN00C8Mwa7CY" >
     <NavigationContainer>
-      {session ? <AppStack/> : <AuthStack/>}
+      {loading ? (
+        <SplashScreen />
+      ): session ? (
+        <AppStack/>
+      ) : (
+        <AuthStack/>
+      )}
     </NavigationContainer>
     <Toast config={toastConfig}/>
     </StripeProvider>
