@@ -3,7 +3,6 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import MainTabs from "./MainTabs";
 import RecargarSaldoScreen from "../screens/RecargarSaldoScreen";
 import { Ionicons } from '@expo/vector-icons'
-import { TouchableOpacity } from "react-native"; 
 import PerfilEditorScreen from "../screens/PerfilEditorScreen";
 import CustomDrawer from "./CustomDrawer";
 
@@ -49,5 +48,6 @@ export default function DrawerNavigator () {
                 }}
             />
         </Drawer.Navigator>
+        
     )
 }
