@@ -7,7 +7,6 @@ import { obtenerTrabajos, obtenerTiposTrabajo} from '../services/supabase';
 import { obtenerPerfil } from '../services/perfil';
 import { colors, spacing, fonts, borderRadius } from '../theme';
 import Texto from '../components/Text';
-import Filtros from '../components/Filtros';
 import TrabajoCard from '../components/TrabajoCard';
 import {useNetworkToast} from '../hooks/useNetworkToast';
 import SelectCategoria from '../components/SelectCategoria';
@@ -22,6 +21,12 @@ export default function HomeScreen({navigation}) {
     const [tipoActivo, setTipoActivo] = useState(null);
     const [subtipoActivo, setSubtipoActivo] = useState(null)
     const [usuarioId, setUsuarioId] = useState(null);
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            title: "Trabajos disponibles"
+        })
+    }, [navigation])
 
     useEffect(() => {
         async function cargarTrabajos() {
@@ -102,7 +107,7 @@ export default function HomeScreen({navigation}) {
      if(error) return <Texto>Error</Texto>
     
     return(
-        <>
+        <SafeAreaView style={{flex: 1}}>
         <SelectCategoria
             onChange={({categoria, subcategoria}) => {
                 //console.log('categoria', categoria, 'sub', subcategoria)
@@ -116,7 +121,7 @@ export default function HomeScreen({navigation}) {
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (<TrabajoCard trabajo={item} onPress={(t) => navigation.navigate('DetalleTrabajo', {trabajo: t}) } />)}
         />
-        </>
+        </SafeAreaView>
     );
 }
 

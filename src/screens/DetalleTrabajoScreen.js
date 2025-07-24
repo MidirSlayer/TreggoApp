@@ -54,7 +54,13 @@ export default function DetalleTrabajoScreen ({route, navigation}) {
       })
       
 
-      console.log('Respuesta',ofert)
+     if (ofert) {
+      Toast.show({
+        type: 'success',
+        text1: 'Se ha enviado su oferta'
+      })
+      navigation.goBack();
+     }
       
     }
 
