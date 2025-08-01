@@ -5,6 +5,7 @@ import PlaceholderScreen from "../screens/PlaceholderScreen";
 import PostJobScreen from "../screens/PostJobScreen";
 import { Ionicons } from '@expo/vector-icons'
 import ProfileScreen from "../screens/ProfileScreen";
+import { colors } from "../theme";
 
 const Tab = createBottomTabNavigator();
 
@@ -26,7 +27,7 @@ export default function MainTabs () {
                     return <Ionicons name={iconName} size={size} color={color} />
                 },
 
-                tabBarActiveTintColor: '#007aff',
+                tabBarActiveTintColor: colors.primary,
                 tabBarInactiveTintColor: 'gray',
                 headerShown: false
             })}

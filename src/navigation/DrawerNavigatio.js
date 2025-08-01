@@ -5,6 +5,7 @@ import RecargarSaldoScreen from "../screens/RecargarSaldoScreen";
 import { Ionicons } from '@expo/vector-icons'
 import PerfilEditorScreen from "../screens/PerfilEditorScreen";
 import CustomDrawer from "./CustomDrawer";
+import { colors } from "../theme";
 
 const Drawer = createDrawerNavigator();
 
@@ -14,7 +15,7 @@ export default function DrawerNavigator () {
         drawerContent={(props) => <CustomDrawer {...props} />}
             screenOptions={{
                 headerShown: true,
-                drawerActiveTintColor: '#007aff',
+                drawerActiveTintColor: colors.primary,
                 drawerLabelStyle: { fontSize:16}
             }}
         >

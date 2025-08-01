@@ -1,6 +1,6 @@
 
 export const colors = {
-  primary: '#007AFF',        // Azul elegante
+  primary: '#00777A',        // Azul elegante
   background: '#F9FAFB',      // Fondo claro y limpio
   card: '#FFFFFF',            // Para tarjetas o cajas
   text: '#1F2937',            // Texto principal

@@ -56,8 +56,8 @@ export default function ProfileScreen({navigation}) {
     return (
         <View style={styles.container}>
 
-            <Texto type="title">Hola, {user.email}</Texto>
-            <Texto type="subtitle">Tus trabajos publicados:</Texto>
+            
+            <Texto type="title">Tus trabajos publicados:</Texto>
 
             <FlatList
                 data={trabajos}
