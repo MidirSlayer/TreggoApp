@@ -1,16 +1,34 @@
 // SplashScreen.js
-import React from 'react';
-import { View, Image, ActivityIndicator, StyleSheet } from 'react-native';
+import React, {useEffect, useRef} from 'react';
+import { View,  StyleSheet } from 'react-native';
+import { Video } from 'expo-av';
+import * as SplashScreen from 'expo-splash-screen'
 
-export default function SplashScreen() {
+export default function AnimatedSplasScreen({onFinish}) {
+
+  const video = useRef(null)
+
+  useEffect(() => {
+    setTimeout(() => {
+      SplashScreen.hideAsync();
+    },1);
+  },[]);
+  
   return (
     <View style={styles.container}>
-      <Image
-        source={require('../../assets/Treggoico.png')} // Asegúrate de que esta ruta sea correcta
-        style={styles.logo}
-        resizeMode="contain"
+      <Video
+      ref={video}
+      source={require('../../assets/TreggoLoading.mp4')}
+      style={styles.video}
+      resizeMode='contain'
+      isLooping={true}
+      shouldPlay
+      onPlaybackStatusUpdate={(status) => {
+        if (status.didJustFinish){
+          onFinish?.()
+        }
+      }}
       />
-      <ActivityIndicator size="large" color="#fff" style={styles.loader} />
     </View>
   );
 }
@@ -18,15 +36,12 @@ export default function SplashScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#006d6d', // fondo principal de Treggo
+    backgroundColor: '#ffffffff',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  logo: {
-    width: 160,
-    height: 160,
-  },
-  loader: {
-    marginTop: 30,
+  video: {
+    width: '100%',
+    height: '100%',
   },
 });

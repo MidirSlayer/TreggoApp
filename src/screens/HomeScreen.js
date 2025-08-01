@@ -10,6 +10,7 @@ import Texto from '../components/Text';
 import TrabajoCard from '../components/TrabajoCard';
 import {useNetworkToast} from '../hooks/useNetworkToast';
 import SelectCategoria from '../components/SelectCategoria';
+import AnimatedSplasScreen from './SplashScreen';
 
 
 export default function HomeScreen({navigation}) {
@@ -103,7 +104,7 @@ export default function HomeScreen({navigation}) {
         }, [tipoActivo, subtipoActivo, todosLosTrabajos]);
 
     
-     if (cargando) return <ActivityIndicator style={{flex: 1}} />
+     if (cargando) return <AnimatedSplasScreen />
      if(error) return <Texto>Error</Texto>
     
     return(
