@@ -2,9 +2,9 @@
 import React, {useEffect, useRef} from 'react';
 import { View,  StyleSheet } from 'react-native';
 import { Video } from 'expo-av';
-import * as SplashScreen from 'expo-splash-screen'
+import * as SplashScreen from 'expo-splash-screen';
 
-export default function AnimatedSplasScreen({onFinish}) {
+export default function AnimatedSplashScreen({onFinish}) {
 
   const video = useRef(null)
 

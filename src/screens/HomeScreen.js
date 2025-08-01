@@ -10,7 +10,7 @@ import Texto from '../components/Text';
 import TrabajoCard from '../components/TrabajoCard';
 import {useNetworkToast} from '../hooks/useNetworkToast';
 import SelectCategoria from '../components/SelectCategoria';
-import AnimatedSplasScreen from './SplashScreen';
+import AnimatedSplashScreen from './SplashScreen';
 
 
 export default function HomeScreen({navigation}) {
@@ -104,7 +104,7 @@ export default function HomeScreen({navigation}) {
         }, [tipoActivo, subtipoActivo, todosLosTrabajos]);
 
     
-     if (cargando) return <AnimatedSplasScreen />
+     if (cargando) return <AnimatedSplashScreen />
      if(error) return <Texto>Error</Texto>
     
     return(
