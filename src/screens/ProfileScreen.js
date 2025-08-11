@@ -63,7 +63,11 @@ export default function ProfileScreen({navigation}) {
                 data={trabajos}
                 keyExtractor={(item => item.id)}
                 renderItem={({item}) => (
-                    <ProfileJobCard trabajo={item} onPress={() => confirmarEliminacion(item.id)} />
+                    <ProfileJobCard trabajo={item} 
+                    onPress={() => confirmarEliminacion(item.id)} 
+                    onPressOfert={() => navigation.navigate('VerOfertas', {trabajo_id: item.id})}
+                    item={item.id}
+                    />
                 )}
                 ListEmptyComponent={<Texto type="muted">No hay publicaciones</Texto>}
             />

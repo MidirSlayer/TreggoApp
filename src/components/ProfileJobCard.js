@@ -7,7 +7,7 @@ import Card from './Card';
 import Button from './Button';
 import { spacing, borderRadius, colors } from '../theme';
 
-export default function ProfileJobCard({ trabajo, onPress }) {
+export default function ProfileJobCard({ trabajo, onPress, onPressOfert, item}) {
   const fecha = new Date(trabajo.fecha).toLocaleDateString();
 
   return (
@@ -19,15 +19,23 @@ export default function ProfileJobCard({ trabajo, onPress }) {
         </View>
       </View>
 
-      <View style={styles.row}>
+      <View style={{}}>
         <Tag label={trabajo.tipo} />
       </View>
-
+      
+      <View style={styles.row}>
       <Button
         title="Eliminar"
         style={styles.boton}
         onPress={() => onPress?.(trabajo)}
       />
+
+      <Button
+        title='Ver ofertas'
+        style={styles.boton}
+        onPress={() => onPressOfert?.(item)}
+        />
+      </View>
     </Card>
   );
 }
@@ -50,12 +58,13 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     alignItems: 'center',
-    marginBottom: spacing.md,
+    marginBottom: spacing.sm,
   },
   boton: {
     alignSelf: 'flex-end',
     marginTop: spacing.sm,
+    marginHorizontal: spacing.xs
   },
 });
