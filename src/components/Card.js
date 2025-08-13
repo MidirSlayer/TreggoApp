@@ -18,5 +18,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
     marginBottom: spacing.md,
+    marginHorizontal: spacing.sm
   },
 });

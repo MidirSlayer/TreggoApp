@@ -32,7 +32,7 @@ export default function OffertCard ({oferta}) {
             </View>
 
             <View style={ styles.btnRow}>
-                <Button title='ver Perfil'/>
+                <Button title='ver Perfil' onPress={() => console.log('READ')}/>
                 <Texto type="subtitle" style={styles.precio} >{`Precio: \n $ ${oferta.precio}`}</Texto>
             
             </View>
