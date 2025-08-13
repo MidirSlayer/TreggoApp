@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, ScrollView, TouchableOpacity, Alert} from "react-native";
+import { View, StyleSheet, TouchableOpacity, Alert} from "react-native";
 import Texto from "../components/Text";
 import Tag from "../components/Tag";
 import Input from "../components/Input";
@@ -10,9 +10,11 @@ import { Ionicons } from '@expo/vector-icons'
 import { getSession } from "../services/session";
 import { enviarOferta } from "../services/HacerOferta";
 import Toast from "react-native-toast-message";
+import { useHeaderHeight } from "@react-navigation/elements";
 
 
 export default function DetalleTrabajoScreen ({route, navigation}) {
+    const headerHeight = useHeaderHeight();
     const { trabajo } = route.params;
     const [favorito, setFavorito] = useState(false);
     const [precio, setPrecio] = useState('');
@@ -65,68 +67,72 @@ export default function DetalleTrabajoScreen ({route, navigation}) {
     }
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
-            <View style={styles.header}>
-                <Avatar uri={trabajo.avatar_url ||
-              'https://ui-avatars.com/api/?name=User&background=ccc&color=fff&size=128'}
+      <View style={{flex: 1, paddingTop: headerHeight}}>
+        <View style={styles.container}>
+          <View style={styles.header}>
+              <Avatar uri={trabajo.avatar_url ||
+            'https://ui-avatars.com/api/?name=User&background=ccc&color=fff&size=128'}
+            /> 
+            <View style={{flex: 1}}>
+              <Texto type="title" style={{marginHorizontal: spacing.sm}}>{trabajo.titulo}</Texto>
+
+            </View>
+
+            <TouchableOpacity onPress={marcarFav}>
+              <Ionicons
+                name={favorito ? 'heart' : 'heart-outline'}
+                size={24}
+                color={favorito ? colors.primary : colors.subtext}
               /> 
-              <View style={{flex: 1}}>
-                <Texto type="title">{trabajo.titulo}</Texto>
-                
-              </View>
-
-              <TouchableOpacity onPress={marcarFav}>
-                <Ionicons
-                  name={favorito ? 'heart' : 'heart-outline'}
-                  size={24}
-                  color={favorito ? colors.primary : colors.subtext}
-                /> 
-              </TouchableOpacity>
-            </View>
-
-            <Tag label={trabajo.tipo} />
-
-            <Texto type="body" style={styles.descripcion}>
-                {trabajo.descripcion || 'Sin descripcion'}
-            </Texto>
-
-            <View >
-              <Texto type="subtitle">Descripcion</Texto>
-              <Input
-                value={descripcion}
-                onChangeText={setDescripcion}
-                placeholder="Descripcion de tu oferta"
-            />
-            <Texto type="subtitle">Precio</Texto>
-            <Input
-                value={precio}
-                onChangeText={setPrecio}
-                placeholder="precio de tus servicios en dolares"
-            />
-            <Texto type="subtitle">Tiempo estimado</Texto>
-            <Input
-                value={tiempoEstimado}
-                onChangeText={setTiempoEstimado}
-                placeholder="Tiempo que tardaras en completar el trabajo"
-            />
-              <Button title='Hacer oferta' onPress={() => manejarContacto(trabajo)} />
-            </View>
-
-            <TouchableOpacity onPress={reportar} style={styles.reportar}>
-              <Ionicons name='flag-outline' size={18} color={colors.danger} />
-              <Texto type='muted' style={{marginLeft : 6, colors: colors.danger}}>
-                reportar trabajo
-              </Texto>
             </TouchableOpacity>
-        </ScrollView>
+          </View>
+
+          <Tag label={trabajo.tipo} />
+
+          <Texto type="body" style={styles.descripcion}>
+              {trabajo.descripcion || 'Sin descripcion'}
+          </Texto>
+          <TouchableOpacity onPress={() => console.log('reporte')} style={styles.reportar}>
+            <Ionicons name='flag-outline' size={18} color={colors.danger} style={{marginHorizontal: 3}}/>
+            <Texto type='muted' style={{marginLeft : 6, color: colors.danger}}>
+              Reportar trabajo
+            </Texto>
+          </TouchableOpacity>
+        </View>
+
+        <View style={{padding: spacing.lg, backgroundColor: colors.card, borderRadius: borderRadius.md, 
+          borderTopRightRadius: borderRadius.md, marginHorizontal: spacing.md}}>
+          <Texto type="subtitle">Descripcion</Texto>
+          <Input
+            value={descripcion}
+            onChangeText={setDescripcion}
+            placeholder="Descripcion de tu oferta"
+          />
+          <Texto type="subtitle">Precio</Texto>
+          <Input
+            value={precio}
+            onChangeText={setPrecio}
+            placeholder="precio de tus servicios en dolares"
+          />
+          <Texto type="subtitle">Tiempo estimado</Texto>
+          <Input
+            value={tiempoEstimado}
+            onChangeText={setTiempoEstimado}
+            placeholder="Tiempo que tardaras en completar el trabajo"
+          />
+          <Button title='Hacer oferta' onPress={() => manejarContacto(trabajo)} />
+        </View>
+      </View>
     )
 }
 
 const styles = StyleSheet.create({
   container: {
     padding: spacing.lg,
-    marginTop: 20,
+    marginVertical: spacing.lg,
     backgroundColor: '#fff',
+    borderRadius: 15,
+    marginHorizontal: spacing.md,
   },
   header: {
     flexDirection: 'row',
@@ -145,8 +151,8 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
     reportar: {
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     alignItems: 'center',
-    marginTop: spacing.lg,
+    marginTop: spacing.sm,
   },
 });

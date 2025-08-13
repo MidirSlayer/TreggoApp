@@ -1,14 +1,14 @@
 import React, {useState} from "react";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
 import {View, StyleSheet, FlatList} from 'react-native'
-import Button from "../components/Button";
 import OffertCard from "../components/OffertCard";
 import { verOfertas } from "../services/HacerOferta";
 import Texto from "../components/Text";
+import { useHeaderHeight } from "@react-navigation/elements";
 
 export default function OffertScreen ({}) {
     const route = useRoute();
-    const {trabajo_id} = route.params;
+    const {trabajo_id} = route?.params;
     const [ofertas, setOfertas ] = useState([]);
 
     useFocusEffect(
@@ -24,7 +24,7 @@ export default function OffertScreen ({}) {
     )
 
     return(
-        <View style={styles.container}>
+        <View style={{flex: 1, paddingTop: useHeaderHeight()}}>
             <FlatList
                 data={ofertas}
                 keyExtractor={(item => item.id)}
@@ -38,7 +38,6 @@ export default function OffertScreen ({}) {
         </View>
     )
 }
-
 const styles = StyleSheet.create({
     container: {
         flex: 1, 
