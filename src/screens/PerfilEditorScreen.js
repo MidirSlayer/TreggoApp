@@ -7,7 +7,7 @@ import { subirImagenPerfil } from "../services/storage";
 import Toast from "react-native-toast-message";
 
 export default function PerfilEditorScreen ({navigation}) {
-    const [perfil, setPerfil] = useState([]);
+    const [perfil, setPerfil] = useState({});
     const [userId, setUserId] = useState();
 
     useEffect(() => {
@@ -16,7 +16,7 @@ export default function PerfilEditorScreen ({navigation}) {
             if (!session) return;
       
             const datos = await obtenerPerfil(session.user.id);
-            setPerfil(datos)
+            setPerfil(datos || {})
             setUserId(session.user.id)
             console.log(userId)
         }
