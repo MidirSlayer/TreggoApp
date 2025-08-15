@@ -46,13 +46,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: spacing.sm,
   },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.border,
-    marginRight: spacing.md,
-  },
+ 
   tituloArea: {
     flex: 1,
   },

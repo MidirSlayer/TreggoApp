@@ -5,6 +5,7 @@ import { getSession } from "../services/session";
 import { obtenerMisTrabajos, eliminarTrabajo} from "../services/supabase";
 import ProfileJobCard from "../components/ProfileJobCard";
 import Texto from "../components/Text";
+import { spacing } from "../theme";
 
 
 export default function ProfileScreen({navigation}) {
@@ -57,7 +58,7 @@ export default function ProfileScreen({navigation}) {
         <View style={styles.container}>
 
             
-            <Texto type="title">Tus trabajos publicados:</Texto>
+            <Texto type="title" style={{marginBottom: spacing.sm}}>Tus trabajos publicados:</Texto>
 
             <FlatList
                 data={trabajos}
