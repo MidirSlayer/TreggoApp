@@ -1,4 +1,5 @@
 import { supabaseUrl, supabaseAnonKey} from './supabase';
+import { getSession } from './session';
 
 export async function crearPerfil(userId, { nombre, telefono, ciudad, avatar_url }) {
   const res = await fetch(`${supabaseUrl}/rest/v1/perfiles`, {
@@ -45,13 +46,14 @@ export async function obtenerPerfil(userId) {
 }
 
 export async function actualizarPerfil(userId, { nombre, telefono, ciudad, avatar_url }) {
-
+  const session = await getSession();
   console.log('Creando perfil con:', { nombre, telefono, ciudad, avatar_url });
 
   const res = await fetch(`${supabaseUrl}/rest/v1/perfiles?id=eq.${userId}`, {
     method: 'PATCH',
     headers: {
       apikey: supabaseAnonKey,
+      Authorization: `Bearer ${session.token}`,
       'Content-Type': 'application/json',
       Prefer: 'return=representation',
     },

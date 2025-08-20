@@ -1,0 +1,39 @@
+{
+  "expo": {
+    "name": "treggo",
+    "slug": "treggo",
+    "version": "0.0.5",
+    "orientation": "portrait",
+    "icon": "./assets/Treggoico.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#00777A"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/Treggoico.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.xtheslayerx.treggo"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "f5e1d9dc-c719-4ec2-aa67-ba86d6e94776"
+      }
+    },
+    "owner": "xtheslayerx",
+    "plugins": [
+      "expo-video"
+    ]
+  }
+}

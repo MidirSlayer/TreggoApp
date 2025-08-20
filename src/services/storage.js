@@ -1,4 +1,4 @@
-import { supabaseAnonKey, supabaseUrl } from "./supabase";
+import { supabaseUrl } from "./supabase";
 import { getSession } from "./session";
 
 export async function subirImagenPerfil (uri, userId) {

@@ -37,3 +37,4 @@ yarn-error.*
 *.tsbuildinfo
 src/.env
 treggo-backend/.env
+.env
