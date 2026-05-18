@@ -4,6 +4,7 @@ import RegisterScreen from "../screens/RegisterScreen";
 import DrawerNavigator from "./DrawerNavigatio";
 import DetalleTrabajoScreen from "../screens/DetalleTrabajoScreen";
 import OffertScreen from "../screens/OfertasScreen";
+import EmailVerificationScreen from "../screens/EmailVerificationScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -15,6 +16,7 @@ export default function AuthStack() {
            <Stack.Screen name="Main" component={DrawerNavigator} options={{headerShown: false}}/>
            <Stack.Screen name='DetalleTrabajo' component={DetalleTrabajoScreen} options={{headerTransparent: true}}/>
            <Stack.Screen name="VerOfertas" component={OffertScreen} options={{headerTransparent: true}} />
+           <Stack.Screen name="EmailVerification" component={EmailVerificationScreen} options={{headerShown: false}}/>
         </Stack.Navigator>
     )   
 }
