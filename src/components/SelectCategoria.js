@@ -11,9 +11,13 @@ export default function SelectCategoria({onChange}) {
 
     useEffect(() => {
         async function cargarCategorias() {
-            const data = await obtenerTiposTrabajo();
-            setCategorias(data);
-            console.log('categooria',data)
+            try {
+                const data = await obtenerTiposTrabajo();
+                setCategorias(data || []);
+                console.log('categorias',data)
+            } catch (error) {
+                console.error('Error al cargar categorias:', error);
+            }
         }
         cargarCategorias();
     },[]);
@@ -25,10 +29,16 @@ export default function SelectCategoria({onChange}) {
                 return;
             }
 
-            const data = await ObtenerSubtipos(categoriaActiva);
-            setSubcategorias(data);
-            console.log( 'subcategorias',data)
-            setSubcategoriaActiva('');
+            try {
+                const data = await ObtenerSubtipos(categoriaActiva);
+                setSubcategorias(data || []);
+                console.log('subcategorias',data)
+            } catch (error) {
+                console.error('Error al cargar subcategorias:', error);
+                setSubcategorias([]);
+            } finally {
+                setSubcategoriaActiva(null);
+            }
         }
 
         cargarSubcategoria();
