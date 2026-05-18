@@ -169,3 +169,41 @@ export async function eliminarTrabajo(id) {
   if (!res) throw new Error(data.message || 'Error al eliminar trabajo');
   return data;
 }
+
+export async function verifyEmailOtp(email, token) {
+  const res = await fetch(`${supabaseUrl}/auth/v1/verify`, {
+    method: 'POST',
+    headers: {
+      apikey: supabaseAnonKey,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      type: 'signup',
+      email,
+      token,
+    }),
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.msg || data.message || 'Código inválido o expirado');
+  return data; // Contiene access_token, refresh_token, user
+}
+
+export async function resendConfirmationEmail(email) {
+  const res = await fetch(`${supabaseUrl}/auth/v1/resend`, {
+    method: 'POST',
+    headers: {
+      apikey: supabaseAnonKey,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      type: 'signup',
+      email,
+    }),
+  });
+
+  if (!res.ok) {
+    const data = await res.json();
+    throw new Error(data.msg || data.message || 'Error al reenviar el código');
+  }
+}
