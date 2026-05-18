@@ -3,7 +3,6 @@ import { NavigationContainer } from "@react-navigation/native"
 import AuthStack from "./src/navigation/AuthStack"
 import AppStack from "./src/navigation/Appstack";
 import { getSession } from "./src/services/session";
-import { StripeProvider } from "@stripe/stripe-react-native";
 import Toast from "react-native-toast-message";
 import { toastConfig } from "./src/themes/ToastTheme";
 import AnimatedSplashScreen from "./src/screens/SplashScreen";
@@ -24,7 +23,7 @@ export default function App() {
     if (loading) {return <AnimatedSplashScreen onFinish={() => setLoading(false)} />} 
   return (
     
-    <StripeProvider publishableKey="pk_test_51RbVfj4gAfXcTJ82QkUVrvsOcxRWH1yMAnkpMQfGxr3lYTn2P6POZagqJAry2XFniyYc3pjLrfwWV2zJB7GwxRfN00C8Mwa7CY" >
+    <>
     <NavigationContainer>
       { session ? (
         <AppStack/>
@@ -33,6 +32,6 @@ export default function App() {
       )}
     </NavigationContainer>
     <Toast config={toastConfig}/>
-    </StripeProvider>
+    </>
 
 )};
