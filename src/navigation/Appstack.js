@@ -6,6 +6,8 @@ import DrawerNavigator from "./DrawerNavigatio";
 import RegisterScreen from "../screens/RegisterScreen";
 import DetalleTrabajoScreen from "../screens/DetalleTrabajoScreen";
 import RecargarSaldoScreen from "../screens/RecargarSaldoScreen";
+import { verifyEmailOtp } from "../services/supabase";
+import EmailVerificationScreen from "../screens/EmailVerificationScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -18,6 +20,7 @@ export default function AppStack() {
         <Stack.Screen name="DetalleTrabajo" component={DetalleTrabajoScreen} options={{headerTransparent: true}}/>
         <Stack.Screen name="RecargarSaldo" component={RecargarSaldoScreen} />
         <Stack.Screen name="VerOfertas" component={OffertScreen} options={{headerTransparent: true}} />
+        <Stack.Screen name="EmailVerification" component={EmailVerificationScreen} options={{headerTransparent: true}} />
         </Stack.Navigator>
     );
 }
