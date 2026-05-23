@@ -77,7 +77,7 @@ export default function RegisterScreen({ navigation, route }) {
 
                         console.log('datos recibidos', datosFinales)
 
-                        await crearPerfil(id, datosFinales);
+                        await crearPerfil(id, datosFinales, access_token);
                         Toast.show({
                             type: 'success',
                             text1: 'Perfil creado',
