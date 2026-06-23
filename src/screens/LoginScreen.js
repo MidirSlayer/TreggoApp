@@ -1,5 +1,5 @@
-import React, { useState} from "react";
-import { View, Text, Alert, StyleSheet, Image} from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, Alert, StyleSheet, Image, KeyboardAvoidingView, Platform, ScrollView, Keyboard } from "react-native";
 import { signIn } from "../services/supabase"; 
 import { saveSession } from "../services/session";
 import Input from "../components/Input";
@@ -11,6 +11,23 @@ export default function LoginScreen({ navigation }) {
     useNetworkToast();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
+    useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener(
+            'keyboardDidShow',
+            () => setKeyboardVisible(true)
+        );
+        const keyboardDidHideListener = Keyboard.addListener(
+            'keyboardDidHide',
+            () => setKeyboardVisible(false)
+        );
+
+        return () => {
+            keyboardDidHideListener.remove();
+            keyboardDidShowListener.remove();
+        };
+    }, []);
     
     
     const handleLogin = async () => {
@@ -39,10 +56,16 @@ export default function LoginScreen({ navigation }) {
     };
 
     return(
-        <View style={styles.container}>
-            <View style={{alignItems: 'center',}}>
-                <Image source={require('../../assets/Treggo.png')} style={{width: 500, height: 150, marginTop: -200}}/>
-            </View>
+        <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
+            <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+                {!isKeyboardVisible && (
+                    <View style={{alignItems: 'center',}}>
+                        <Image source={require('../../assets/Treggo.png')} style={{width: 500, height: 150, marginTop: -200}}/>
+                    </View>
+                )}
             <Texto type="title">Iniciar Sesión</Texto>
             <Texto type="body">Correo Electronico</Texto>
             <Input
@@ -65,13 +88,14 @@ export default function LoginScreen({ navigation }) {
             <Button title="Entrar"  onPress={handleLogin}/>
 
             <Texto style={styles.link} onPress={() =>navigation.replace('Register')}>¿No tienes cuenta? Registrate.</Texto>
-        </View>
+            </ScrollView>
+        </KeyboardAvoidingView>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flexGrow: 1,
         justifyContent: 'center',
         padding: 20
     },

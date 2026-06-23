@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Alert, StyleSheet, Image } from "react-native";
+import { View, Alert, StyleSheet, Image, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import { singUp } from "../services/supabase";
 import Input from "../components/Input";
 import Button from "../components/Button";
@@ -44,10 +44,10 @@ export default function RegisterScreen({ navigation, route }) {
             } else {
                 // Eliminar espacios, guiones y paréntesis
                 cleanedInput = cleanedInput.replace(/[\s\-\(\)]/g, '');
-                
+
                 if (!cleanedInput.startsWith('+')) {
                     Alert.alert(
-                        'Formato de teléfono', 
+                        'Formato de teléfono',
                         'El número de teléfono debe comenzar con "+" seguido del código de país (ej. +54911...).'
                     );
                     return;
@@ -72,7 +72,7 @@ export default function RegisterScreen({ navigation, route }) {
 
             const user = await singUp(cleanedInput, password);
             console.log('Registrado exitosamente, enviando a verificación');
-            
+
             // Navegamos a verificación pasando el parámetro correcto
             if (isEmail) {
                 navigation.navigate('EmailVerification', { email: cleanedInput });
@@ -85,76 +85,81 @@ export default function RegisterScreen({ navigation, route }) {
     }
 
     return (
-        <View style={styles.container}>
-            <View style={{ alignItems: 'center', }}>
-                <Image source={require('../../assets/Treggo.png')} style={{ width: 500, height: 150, marginTop: -200 }} />
-            </View>
-
-            {modeCreator ? (
-                <PerfilForm
-                    onSubmit={async (datos) => {
-
-                        let urlFinal = datos.avatar_url
-
-                        if (datos.avatar_url?.startsWith('file')) {
-                            urlFinal = await subirImagenRegistro(datos.avatar_url, id, access_token);
-                        }
-
-                        const datosFinales = { ...datos, avatar_url: urlFinal };
-
-                        console.log('datos recibidos', datosFinales)
-
-                        await crearPerfil(id, datosFinales, access_token);
-                        Toast.show({
-                            type: 'success',
-                            text1: 'Perfil creado',
-                            position: 'top',
-                        });
-                        navigation.replace('Login')
-                    }}
-                />
-            ) : (
-                <View>
-                    <Texto style={styles.title}>Crear Cuenta</Texto>
-                    <Texto type="body">Correo Electronico o numero de telefono</Texto>
-                    <Input
-                        placeholder="Email o Teléfono (ej. +54911...)"
-                        autoCapitalize="none"
-                        keyboardType="default"
-                        onChangeText={setEmailOrPhone}
-                        value={emailOrPhone}
-                    />
-                    <Texto type="body">Contraseña</Texto>
-                    <Input
-                        placeholder="Contraseña"
-                        secureTextEntry
-                        autoCapitalize="none"
-                        onChangeText={setPassword}
-                        value={password}
-                    />
-                    <Texto type="body">Confirmar contraseña</Texto>
-                    <Input
-                        placeholder=" Confirmar Contraseña"
-                        secureTextEntry
-                        autoCapitalize="none"
-
-                        onChangeText={setConfirm}
-                        value={confirm}
-                    />
-
-                    <Button title=" Registrarse" onPress={handleRegister} />
-                    <Texto style={styles.link} onPress={() => navigation.replace('Login')} >¿Ya tienes cuenta? Inicia Sesion</Texto>
+        <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
+            <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+                <View style={{ alignItems: 'center', }}>
+                    <Image source={require('../../assets/Treggo.png')} style={{ width: 500, height: 150, marginTop: -200 }} />
                 </View>
-            )}
+
+                {modeCreator ? (
+                    <PerfilForm
+                        onSubmit={async (datos) => {
+
+                            let urlFinal = datos.avatar_url
+
+                            if (datos.avatar_url?.startsWith('file')) {
+                                urlFinal = await subirImagenRegistro(datos.avatar_url, id, access_token);
+                            }
+
+                            const datosFinales = { ...datos, avatar_url: urlFinal };
+
+                            console.log('datos recibidos', datosFinales)
+
+                            await crearPerfil(id, datosFinales, access_token);
+                            Toast.show({
+                                type: 'success',
+                                text1: 'Perfil creado',
+                                position: 'top',
+                            });
+                            navigation.replace('Login')
+                        }}
+                    />
+                ) : (
+                    <View>
+                        <Texto style={styles.title}>Crear Cuenta</Texto>
+                        <Texto type="body">Correo Electronico o numero de telefono</Texto>
+                        <Input
+                            placeholder="Email o Teléfono (ej. +54911...)"
+                            autoCapitalize="none"
+                            keyboardType="default"
+                            onChangeText={setEmailOrPhone}
+                            value={emailOrPhone}
+                        />
+                        <Texto type="body">Contraseña</Texto>
+                        <Input
+                            placeholder="Contraseña"
+                            secureTextEntry
+                            autoCapitalize="none"
+                            onChangeText={setPassword}
+                            value={password}
+                        />
+                        <Texto type="body">Confirmar contraseña</Texto>
+                        <Input
+                            placeholder=" Confirmar Contraseña"
+                            secureTextEntry
+                            autoCapitalize="none"
+
+                            onChangeText={setConfirm}
+                            value={confirm}
+                        />
+
+                        <Button title=" Registrarse" onPress={handleRegister} />
+                        <Texto style={styles.link} onPress={() => navigation.replace('Login')} >¿Ya tienes cuenta? Inicia Sesion</Texto>
+                    </View>
+                )}
 
 
-        </View>
+            </ScrollView>
+        </KeyboardAvoidingView>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flexGrow: 1,
         justifyContent: 'center',
         padding: 20
     },
