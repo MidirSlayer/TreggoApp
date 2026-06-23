@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 import { View, StyleSheet, TextInput, Alert, Image, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
-import { verifyEmailOtp, resendConfirmationEmail } from "../services/supabase";
+import { verifyEmailOtp, resendConfirmationEmail, verifyPhoneOtp, resendConfirmationPhone } from "../services/supabase";
 import Button from "../components/Button";
 import Texto from "../components/Text";
 import { colors, spacing, borderRadius } from "../theme";
 import Toast from "react-native-toast-message";
 
 export default function EmailVerificationScreen({ route, navigation }) {
-    const { email } = route.params || {};
+    const { email, phone } = route.params || {};
+    const identifier = email || phone;
+    const isPhone = !!phone;
     
     const [code, setCode] = useState(['', '', '', '', '', '']);
     const [loading, setLoading] = useState(false);
@@ -15,11 +17,11 @@ export default function EmailVerificationScreen({ route, navigation }) {
     const inputRefs = useRef([]);
 
     useEffect(() => {
-        if (!email) {
-            Alert.alert('Error', 'No se ha proporcionado un correo electrónico para verificar.');
+        if (!identifier) {
+            Alert.alert('Error', 'No se ha proporcionado información de verificación.');
             navigation.goBack();
         }
-    }, [email]);
+    }, [identifier]);
 
     useEffect(() => {
         let timer;
@@ -78,11 +80,13 @@ export default function EmailVerificationScreen({ route, navigation }) {
 
         try {
             setLoading(true);
-            const data = await verifyEmailOtp(email, fullCode);
+            const data = isPhone
+                ? await verifyPhoneOtp(phone, fullCode)
+                : await verifyEmailOtp(email, fullCode);
             
             Toast.show({
                 type: 'success',
-                text1: 'Email verificado',
+                text1: isPhone ? 'Teléfono verificado' : 'Email verificado',
                 text2: 'Ahora puedes completar tu perfil.',
                 position: 'top',
             });
@@ -106,12 +110,16 @@ export default function EmailVerificationScreen({ route, navigation }) {
         
         try {
             setLoading(true);
-            await resendConfirmationEmail(email);
+            if (isPhone) {
+                await resendConfirmationPhone(phone);
+            } else {
+                await resendConfirmationEmail(email);
+            }
             setCooldown(60);
             Toast.show({
                 type: 'info',
                 text1: 'Código reenviado',
-                text2: 'Revisa tu bandeja de entrada o spam.',
+                text2: isPhone ? 'Revisa tus mensajes SMS.' : 'Revisa tu bandeja de entrada o spam.',
                 position: 'top',
             });
         } catch (error) {
@@ -134,9 +142,12 @@ export default function EmailVerificationScreen({ route, navigation }) {
                 <View style={styles.card}>
                     <Texto style={styles.title}>Verifica tu cuenta</Texto>
                     <Texto style={styles.subtitle}>
-                        Hemos enviado un código de 6 dígitos a:
+                        {isPhone 
+                            ? 'Hemos enviado un código SMS de 6 dígitos a:' 
+                            : 'Hemos enviado un código de 6 dígitos a:'
+                        }
                     </Texto>
-                    <Texto style={styles.emailText}>{email}</Texto>
+                    <Texto style={styles.emailText}>{identifier}</Texto>
 
                     <View style={styles.codeContainer}>
                         {code.map((digit, index) => (

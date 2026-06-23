@@ -3,23 +3,28 @@ import { getSession } from "./session";
 export const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
 export const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 //funcion de registro
-export async function singUp(email, password) {
-  
+export async function singUp(emailOrPhone, password) {
+   const isEmail = emailOrPhone.includes('@');
+   const body = isEmail 
+     ? { email: emailOrPhone, password } 
+     : { phone: emailOrPhone, password };
+
    const res = await fetch(`${supabaseUrl}/auth/v1/signup`, {
     method: 'POST',
     headers: {
         apikey: supabaseAnonKey,
         'Content-Type' : 'application/json',
     },
-    body: JSON.stringify({email, password}),
+    body: JSON.stringify(body),
    });
    
    const data = await res.json();
    console.log(data)
    if(!res.ok) {
-    if (data.code === 422) {
-      throw new Error('Ya existe un cuenta con ese correo')
+    if (data.code === 422 || data.message?.includes('already registered')) {
+      throw new Error(isEmail ? 'Ya existe un cuenta con ese correo' : 'Ya existe una cuenta con ese número de teléfono')
     }
+    throw new Error(data.msg || data.message || 'Error al registrarse');
    }
    return data;
 }
@@ -205,5 +210,43 @@ export async function resendConfirmationEmail(email) {
   if (!res.ok) {
     const data = await res.json();
     throw new Error(data.msg || data.message || 'Error al reenviar el código');
+  }
+}
+
+export async function verifyPhoneOtp(phone, token) {
+  const res = await fetch(`${supabaseUrl}/auth/v1/verify`, {
+    method: 'POST',
+    headers: {
+      apikey: supabaseAnonKey,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      type: 'sms',
+      phone,
+      token,
+    }),
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.msg || data.message || 'Código inválido o expirado');
+  return data;
+}
+
+export async function resendConfirmationPhone(phone) {
+  const res = await fetch(`${supabaseUrl}/auth/v1/resend`, {
+    method: 'POST',
+    headers: {
+      apikey: supabaseAnonKey,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      type: 'sms',
+      phone,
+    }),
+  });
+
+  if (!res.ok) {
+    const data = await res.json();
+    throw new Error(data.msg || data.message || 'Error al reenviar el código por SMS');
   }
 }

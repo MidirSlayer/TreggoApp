@@ -11,7 +11,7 @@ import Toast from "react-native-toast-message";
 
 export default function RegisterScreen({ navigation, route }) {
     const { verified, userId, accessToken } = route?.params || {};
-    const [email, setEmail] = useState('');
+    const [emailOrPhone, setEmailOrPhone] = useState('');
     const [password, setPassword] = useState('');
     const [modeCreator, setModeCreator] = useState(false);
     const [id, setId] = useState()
@@ -28,14 +28,36 @@ export default function RegisterScreen({ navigation, route }) {
 
     const handleRegister = async () => {
         try {
-            if (!email || !password || !confirm) {
+            if (!emailOrPhone || !password || !confirm) {
                 Alert.alert('Campos incompletos', 'Por favor, completa todos los campos.');
                 return;
             }
 
-            if (!email.includes('@') || !email.includes('.')) {
-                Alert.alert('Email inválido', 'Ingresa un email válido.');
-                return;
+            const isEmail = emailOrPhone.includes('@');
+            let cleanedInput = emailOrPhone.trim();
+
+            if (isEmail) {
+                if (!cleanedInput.includes('.')) {
+                    Alert.alert('Email inválido', 'Ingresa un email válido.');
+                    return;
+                }
+            } else {
+                // Eliminar espacios, guiones y paréntesis
+                cleanedInput = cleanedInput.replace(/[\s\-\(\)]/g, '');
+                
+                if (!cleanedInput.startsWith('+')) {
+                    Alert.alert(
+                        'Formato de teléfono', 
+                        'El número de teléfono debe comenzar con "+" seguido del código de país (ej. +54911...).'
+                    );
+                    return;
+                }
+
+                const phoneRegex = /^\+[1-9]\d{1,14}$/;
+                if (!phoneRegex.test(cleanedInput)) {
+                    Alert.alert('Teléfono inválido', 'Por favor, ingresa un número de teléfono válido.');
+                    return;
+                }
             }
 
             if (password !== confirm) {
@@ -48,10 +70,15 @@ export default function RegisterScreen({ navigation, route }) {
                 return;
             }
 
-            const user = await singUp(email, password);
+            const user = await singUp(cleanedInput, password);
             console.log('Registrado exitosamente, enviando a verificación');
-            // En lugar de activar modeCreator, navegamos a verificación
-            navigation.navigate('EmailVerification', { email });
+            
+            // Navegamos a verificación pasando el parámetro correcto
+            if (isEmail) {
+                navigation.navigate('EmailVerification', { email: cleanedInput });
+            } else {
+                navigation.navigate('EmailVerification', { phone: cleanedInput });
+            }
         } catch (error) {
             Alert.alert('Error', error.message);
         }
@@ -89,13 +116,13 @@ export default function RegisterScreen({ navigation, route }) {
             ) : (
                 <View>
                     <Texto style={styles.title}>Crear Cuenta</Texto>
-                    <Texto type="body">Correo Electronico</Texto>
+                    <Texto type="body">Correo Electronico o numero de telefono</Texto>
                     <Input
-                        placeholder="Email"
+                        placeholder="Email o Teléfono (ej. +54911...)"
                         autoCapitalize="none"
-                        keyboardType="email-address"
-                        onChangeText={setEmail}
-                        value={email}
+                        keyboardType="default"
+                        onChangeText={setEmailOrPhone}
+                        value={emailOrPhone}
                     />
                     <Texto type="body">Contraseña</Texto>
                     <Input
